@@ -1,15 +1,16 @@
-# Uniswap V2
+# DXswap Core Contracts
 
-[![Actions Status](https://github.com/Uniswap/uniswap-v2-core/workflows/CI/badge.svg)](https://github.com/Uniswap/uniswap-v2-core/actions)
-[![Version](https://img.shields.io/npm/v/@uniswap/v2-core)](https://www.npmjs.com/package/@uniswap/v2-core)
-
-In-depth documentation on Uniswap V2 is available at [uniswap.org](https://uniswap.org/docs).
+DXswap core is a fork of the (Uniswapv2 core smart contracts v1.0.0)[https://github.com/Uniswap/uniswap-v2-core/releases/tag/v1.0.0].
 
 The built contract artifacts can be browsed via [unpkg.com](https://unpkg.com/browse/@uniswap/v2-core@latest/).
 
 # Local Development
 
 The following assumes the use of `node@>=10`.
+
+## Clone Repository
+
+`git clone https://github.com/levelkdev/dxswap-core.git`
 
 ## Install Dependencies
 
