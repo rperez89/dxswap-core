@@ -54,8 +54,8 @@ contract UniswapV2Factory is IUniswapV2Factory {
         protocolFeeDenominator = _protocolFeeDenominator;
     }
     
-    function setSwapFee(address pair, uint8 swapFee) external {
+    function setSwapFee(address _pair, uint8 _swapFee) external {
         require(msg.sender == feeToSetter, 'UniswapV2: FORBIDDEN');
-        IUniswapV2Pair(pair).setSwapFee(swapFee);
+        IUniswapV2Pair(_pair).setSwapFee(_swapFee);
     }
 }
