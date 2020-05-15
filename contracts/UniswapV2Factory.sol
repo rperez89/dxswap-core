@@ -6,7 +6,7 @@ import './UniswapV2Pair.sol';
 contract UniswapV2Factory is IUniswapV2Factory {
     address public feeTo;
     address public feeToSetter;
-    uint8 public protocolFee = 5; // uses 0.05% (1/6 of 0.30%) per trade as default
+    uint8 public protocolFeeDenominator = 5; // uses 0.05% (1/~6 of 0.30%) per trade as default
 
     mapping(address => mapping(address => address)) public getPair;
     address[] public allPairs;
@@ -48,10 +48,10 @@ contract UniswapV2Factory is IUniswapV2Factory {
         feeToSetter = _feeToSetter;
     }
     
-    function setProtocolFee(uint8 _protocolFee) external {
+    function setProtocolFee(uint8 _protocolFeeDenominator) external {
         require(msg.sender == feeToSetter, 'UniswapV2: FORBIDDEN');
-        require(_protocolFee > 0, 'UniswapV2: FORBIDDEN_FEE');
-        protocolFee = _protocolFee;
+        require(_protocolFeeDenominator > 0, 'UniswapV2: FORBIDDEN_FEE');
+        protocolFeeDenominator = _protocolFeeDenominator;
     }
     
     function setSwapFee(address pair, uint8 swapFee) external {
