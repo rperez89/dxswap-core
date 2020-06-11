@@ -55,7 +55,7 @@ contract DXswapFactory is IDXswapFactory {
     }
     
     function setSwapFee(address _pair, uint8 _swapFee) external {
-        require(msg.sender == feeToSetter, 'UniswapV2: FORBIDDEN');
-        IUniswapV2Pair(_pair).setSwapFee(_swapFee);
+        require(msg.sender == feeToSetter, 'DXswapFactory: FORBIDDEN');
+        IDXswapPair(_pair).setSwapFee(_swapFee);
     }
 }

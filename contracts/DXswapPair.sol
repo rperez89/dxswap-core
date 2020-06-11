@@ -95,8 +95,8 @@ contract DXswapPair is IDXswapPair, DXswapERC20 {
 
     // if fee is on, mint liquidity equivalent to 1/ (protocolFeeDenominator + ~1) share of the growth in sqrt(k)
     function _mintFee(uint112 _reserve0, uint112 _reserve1) private returns (bool feeOn) {
-        address feeTo = IUniswapV2Factory(factory).feeTo();
-        uint8 protocolFeeDenominator = IUniswapV2Factory(factory).protocolFeeDenominator();
+        address feeTo = IDXswapFactory(factory).feeTo();
+        uint8 protocolFeeDenominator = IDXswapFactory(factory).protocolFeeDenominator();
         feeOn = feeTo != address(0);
         uint _kLast = kLast; // gas savings
         if (feeOn) {
