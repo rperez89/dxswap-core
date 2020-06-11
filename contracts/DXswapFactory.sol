@@ -1,9 +1,9 @@
 pragma solidity =0.5.16;
 
-import './interfaces/IUniswapV2Factory.sol';
-import './UniswapV2Pair.sol';
+import './interfaces/IDXswapFactory.sol';
+import './DXswapPair.sol';
 
-contract UniswapV2Factory is IUniswapV2Factory {
+contract DXswapFactory is IDXswapFactory {
     address public feeTo;
     address public feeToSetter;
     uint8 public protocolFeeDenominator = 5; // uses 0.05% (1/~6 of 0.30%) per trade as default
@@ -22,16 +22,16 @@ contract UniswapV2Factory is IUniswapV2Factory {
     }
 
     function createPair(address tokenA, address tokenB) external returns (address pair) {
-        require(tokenA != tokenB, 'UniswapV2: IDENTICAL_ADDRESSES');
+        require(tokenA != tokenB, 'DXswapFactory: IDENTICAL_ADDRESSES');
         (address token0, address token1) = tokenA < tokenB ? (tokenA, tokenB) : (tokenB, tokenA);
-        require(token0 != address(0), 'UniswapV2: ZERO_ADDRESS');
-        require(getPair[token0][token1] == address(0), 'UniswapV2: PAIR_EXISTS'); // single check is sufficient
-        bytes memory bytecode = type(UniswapV2Pair).creationCode;
+        require(token0 != address(0), 'DXswapFactory: ZERO_ADDRESS');
+        require(getPair[token0][token1] == address(0), 'DXswapFactory: PAIR_EXISTS'); // single check is sufficient
+        bytes memory bytecode = type(DXswapPair).creationCode;
         bytes32 salt = keccak256(abi.encodePacked(token0, token1));
         assembly {
             pair := create2(0, add(bytecode, 32), mload(bytecode), salt)
         }
-        IUniswapV2Pair(pair).initialize(token0, token1);
+        IDXswapPair(pair).initialize(token0, token1);
         getPair[token0][token1] = pair;
         getPair[token1][token0] = pair; // populate mapping in the reverse direction
         allPairs.push(pair);
@@ -39,23 +39,23 @@ contract UniswapV2Factory is IUniswapV2Factory {
     }
 
     function setFeeTo(address _feeTo) external {
-        require(msg.sender == feeToSetter, 'UniswapV2: FORBIDDEN');
+        require(msg.sender == feeToSetter, 'DXswapFactory: FORBIDDEN');
         feeTo = _feeTo;
     }
 
     function setFeeToSetter(address _feeToSetter) external {
-        require(msg.sender == feeToSetter, 'UniswapV2: FORBIDDEN');
+        require(msg.sender == feeToSetter, 'DXswapFactory: FORBIDDEN');
         feeToSetter = _feeToSetter;
     }
     
     function setProtocolFee(uint8 _protocolFeeDenominator) external {
-        require(msg.sender == feeToSetter, 'UniswapV2: FORBIDDEN');
-        require(_protocolFeeDenominator > 0, 'UniswapV2: FORBIDDEN_FEE');
+        require(msg.sender == feeToSetter, 'DXswapFactory: FORBIDDEN');
+        require(_protocolFeeDenominator > 0, 'DXswapFactory: FORBIDDEN_FEE');
         protocolFeeDenominator = _protocolFeeDenominator;
     }
     
     function setSwapFee(address _pair, uint8 _swapFee) external {
-        require(msg.sender == feeToSetter, 'UniswapV2: FORBIDDEN');
-        IUniswapV2Pair(_pair).setSwapFee(_swapFee);
+        require(msg.sender == feeToSetter, 'DXswapFactory: FORBIDDEN');
+        IDXswapPair(_pair).setSwapFee(_swapFee);
     }
 }
