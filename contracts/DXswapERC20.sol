@@ -79,7 +79,7 @@ contract DXswapERC20 is IDXswapERC20 {
     }
 
     function permit(address owner, address spender, uint value, uint deadline, uint8 v, bytes32 r, bytes32 s) external {
-        require(deadline >= block.timestamp, 'DXswap: EXPIRED');
+        require(deadline >= block.timestamp, 'DXswapERC20: EXPIRED');
         bytes32 digest = keccak256(
             abi.encodePacked(
                 '\x19\x01',
@@ -88,7 +88,7 @@ contract DXswapERC20 is IDXswapERC20 {
             )
         );
         address recoveredAddress = ecrecover(digest, v, r, s);
-        require(recoveredAddress != address(0) && recoveredAddress == owner, 'DXswap: INVALID_SIGNATURE');
+        require(recoveredAddress != address(0) && recoveredAddress == owner, 'DXswapERC20: INVALID_SIGNATURE');
         _approve(owner, spender, value);
     }
 }
