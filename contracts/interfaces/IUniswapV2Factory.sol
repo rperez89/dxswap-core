@@ -4,7 +4,7 @@ interface IUniswapV2Factory {
     event PairCreated(address indexed token0, address indexed token1, address pair, uint);
 
     function feeTo() external view returns (address);
-    function protocolFee() external view returns (uint8);
+    function protocolFeeDenominator() external view returns (uint8);
     function feeToSetter() external view returns (address);
 
     function getPair(address tokenA, address tokenB) external view returns (address pair);

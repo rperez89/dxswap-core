@@ -58,7 +58,7 @@ describe('DynamicFees', () => {
     const [token0Reserve, token1Reserve, _] = await pair.getReserves()
     const kLast = await pair.kLast()
     const feeTo = await factory.feeTo()
-    const protocolFee = await factory.protocolFee()
+    const protocolFeeDenominator = await factory.protocolFeeDenominator()
     const totalSupply = await pair.totalSupply()
     let rootK, rootKLast;
     if (feeTo != AddressZero) {
@@ -75,7 +75,7 @@ describe('DynamicFees', () => {
       }
       
       return (totalSupply.mul(rootK.sub(rootKLast)))
-        .div(rootK.mul(protocolFee).add(rootKLast))
+        .div(rootK.mul(protocolFeeDenominator).add(rootKLast))
     } else {
       return bigNumberify(0)
     }
@@ -136,9 +136,9 @@ describe('DynamicFees', () => {
     return outputs;
   }
   
-  it('feeTo:on, swapFee:default, protocolFee:default', async () => {
+  it('feeTo:on, swapFee:default, protocolFeeDenominator:default', async () => {
     await factory.setFeeTo(other.address)
-    expect(await factory.protocolFee()).to.eq(5)
+    expect(await factory.protocolFeeDenominator()).to.eq(5)
 
     await addLiquidity(expandTo18Decimals(5), expandTo18Decimals(10))
     
@@ -151,10 +151,10 @@ describe('DynamicFees', () => {
     expect((await pair.balanceOf(other.address)).div(ROUND_EXCEPTION)).to.eq(toMintForProtocol.div(ROUND_EXCEPTION))    
   })
   
-  it('feeTo:on, swapFee:default, protocolFee:0.025%', async () => {
+  it('feeTo:on, swapFee:default, protocolFeeDenominator:0.025%', async () => {
     await factory.setFeeTo(other.address)
     await factory.setProtocolFee(11)
-    expect(await factory.protocolFee()).to.eq(11)
+    expect(await factory.protocolFeeDenominator()).to.eq(11)
   
     await addLiquidity(expandTo18Decimals(5), expandTo18Decimals(10))
   
@@ -174,11 +174,11 @@ describe('DynamicFees', () => {
       
   })
   
-  it('feeTo:on, swapFee:0.2%, protocolFee:0.1%', async () => {
+  it('feeTo:on, swapFee:0.2%, protocolFeeDenominator:0.1%', async () => {
     await factory.setFeeTo(other.address)
     await factory.setProtocolFee(1)
     await factory.setSwapFee(pair.address, 20)
-    expect(await factory.protocolFee()).to.eq(1)
+    expect(await factory.protocolFeeDenominator()).to.eq(1)
     expect(await pair.swapFee()).to.eq(20)
 
     await addLiquidity(expandTo18Decimals(5), expandTo18Decimals(10))
@@ -194,9 +194,9 @@ describe('DynamicFees', () => {
     expect((await pair.balanceOf(other.address)).div(ROUND_EXCEPTION)).to.eq(toMintForProtocol.div(ROUND_EXCEPTION))
   })
   
-  it('feeTo:on, swapFee:0.2%, protocolFee:disabled', async () => {
+  it('feeTo:on, swapFee:0.2%, protocolFeeDenominator:disabled', async () => {
     await factory.setSwapFee(pair.address, 20)
-    expect(await factory.protocolFee()).to.eq(5)
+    expect(await factory.protocolFeeDenominator()).to.eq(5)
     expect(await pair.swapFee()).to.eq(20)
 
     await addLiquidity(expandTo18Decimals(5), expandTo18Decimals(10))
@@ -212,7 +212,7 @@ describe('DynamicFees', () => {
     expect((await pair.balanceOf(other.address)).div(ROUND_EXCEPTION)).to.eq(0)
   })
   
-  it('MULTIPLE_TRADES:feeTo:on, swapFee:default, protocolFee:default', async () => {
+  it('MULTIPLE_TRADES:feeTo:on, swapFee:default, protocolFeeDenominator:default', async () => {
     await factory.setFeeTo(other.address)
   
     await addLiquidity(expandTo18Decimals(800), expandTo18Decimals(10))
@@ -232,11 +232,11 @@ describe('DynamicFees', () => {
     expect((await pair.balanceOf(other.address)).div(ROUND_EXCEPTION)).to.eq(toMintForProtocol.div(ROUND_EXCEPTION))  
   })
   
-  it('MULTIPLE_TRADES:feeTo:on, swapFee:0.01, protocolFee:0.001', async () => {
+  it('MULTIPLE_TRADES:feeTo:on, swapFee:0.01, protocolFeeDenominator:0.001', async () => {
     await factory.setFeeTo(other.address)
     await factory.setSwapFee(pair.address, 1)
     await factory.setProtocolFee(9)
-    expect(await factory.protocolFee()).to.eq(9)
+    expect(await factory.protocolFeeDenominator()).to.eq(9)
     expect(await pair.swapFee()).to.eq(1)
   
     await addLiquidity(expandTo18Decimals(800), expandTo18Decimals(10))
@@ -256,7 +256,7 @@ describe('DynamicFees', () => {
     expect((await pair.balanceOf(other.address)).div(ROUND_EXCEPTION)).to.eq(toMintForProtocol.div(ROUND_EXCEPTION))  
   })
   
-  it('MULTIPLE_TRADES:feeTo:on, swapFee:0, protocolFee:default', async () => {
+  it('MULTIPLE_TRADES:feeTo:on, swapFee:0, protocolFeeDenominator:default', async () => {
     await factory.setFeeTo(other.address)
     await factory.setSwapFee(pair.address, 0)
     expect(await pair.swapFee()).to.eq(0)
@@ -278,7 +278,7 @@ describe('DynamicFees', () => {
     expect((await pair.balanceOf(other.address)).div(ROUND_EXCEPTION)).to.eq(toMintForProtocol.div(ROUND_EXCEPTION))  
   })
   
-  it('MULTIPLE_TRADES:feeTo:on, swapFee:0, protocolFee:0', async () => {
+  it('MULTIPLE_TRADES:feeTo:on, swapFee:0, protocolFeeDenominator:0', async () => {
     await factory.setSwapFee(pair.address, 0)
     expect(await pair.swapFee()).to.eq(0)
   
