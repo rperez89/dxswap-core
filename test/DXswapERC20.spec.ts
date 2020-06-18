@@ -7,7 +7,7 @@ import { ecsign } from 'ethereumjs-util'
 
 import { expandTo18Decimals, getApprovalDigest } from './shared/utilities'
 
-import ERC20 from '../build/ERC20.json'
+import ERC20 from '../build/contracts/ERC20.json'
 
 chai.use(solidity)
 
@@ -30,7 +30,7 @@ describe('DXswapERC20', () => {
   it('name, symbol, decimals, totalSupply, balanceOf, DOMAIN_SEPARATOR, PERMIT_TYPEHASH', async () => {
     const name = await token.name()
     expect(name).to.eq('DXswap')
-    expect(await token.symbol()).to.eq('DXSW')
+    expect(await token.symbol()).to.eq('DXS')
     expect(await token.decimals()).to.eq(18)
     expect(await token.totalSupply()).to.eq(TOTAL_SUPPLY)
     expect(await token.balanceOf(wallet.address)).to.eq(TOTAL_SUPPLY)

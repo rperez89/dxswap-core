@@ -4,9 +4,9 @@ import { deployContract } from 'ethereum-waffle'
 
 import { expandTo18Decimals } from './utilities'
 
-import ERC20 from '../../build/ERC20.json'
-import DXswapFactory from '../../build/DXswapFactory.json'
-import DXswapPair from '../../build/DXswapPair.json'
+import ERC20 from '../../build/contracts/ERC20.json'
+import DXswapFactory from '../../build/contracts/DXswapFactory.json'
+import DXswapPair from '../../build/contracts/DXswapPair.json'
 
 interface FactoryFixture {
   factory: Contract

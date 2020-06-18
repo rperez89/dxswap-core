@@ -7,7 +7,7 @@ import { solidity, MockProvider, createFixtureLoader } from 'ethereum-waffle'
 import { getCreate2Address } from './shared/utilities'
 import { factoryFixture } from './shared/fixtures'
 
-import DXswapPair from '../build/DXswapPair.json'
+import DXswapPair from '../build/contracts/DXswapPair.json'
 
 chai.use(solidity)
 
@@ -38,7 +38,7 @@ describe('DXswapFactory', () => {
   })
 
   async function createPair(tokens: [string, string]) {
-    const bytecode = `0x${DXswapPair.evm.bytecode.object}`
+    const bytecode = DXswapPair.bytecode
     const create2Address = getCreate2Address(factory.address, tokens, bytecode)
     await expect(factory.createPair(...tokens))
       .to.emit(factory, 'PairCreated')
@@ -68,7 +68,7 @@ describe('DXswapFactory', () => {
   it('createPair:gas', async () => {
     const tx = await factory.createPair(...TEST_ADDRESSES)
     const receipt = await tx.wait()
-    expect(receipt.gasUsed).to.eq(2647498)
+    expect(receipt.gasUsed).to.eq(2129708)
   })
 
   it('setFeeTo', async () => {
