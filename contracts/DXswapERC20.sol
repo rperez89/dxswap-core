@@ -7,7 +7,7 @@ contract DXswapERC20 is IDXswapERC20 {
     using SafeMath for uint;
 
     string public constant name = 'DXswap';
-    string public constant symbol = 'DXSW';
+    string public constant symbol = 'DXS';
     uint8 public constant decimals = 18;
     uint  public totalSupply;
     mapping(address => uint) public balanceOf;
