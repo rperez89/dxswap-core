@@ -1,5 +1,4 @@
 node_modules/
-build/
 contracts/.flattened
 .openzeppelin/.session
 .env
