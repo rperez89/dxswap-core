@@ -624,7 +624,7 @@
             "scope": 1855,
             "src": "210:54:4",
             "stateMutability": "pure",
-            "superFunction": 1958,
+            "superFunction": 1963,
             "visibility": "external"
           },
           {
@@ -678,7 +678,7 @@
             "scope": 1855,
             "src": "269:56:4",
             "stateMutability": "pure",
-            "superFunction": 1963,
+            "superFunction": 1968,
             "visibility": "external"
           },
           {
@@ -732,7 +732,7 @@
             "scope": 1855,
             "src": "330:50:4",
             "stateMutability": "pure",
-            "superFunction": 1968,
+            "superFunction": 1973,
             "visibility": "external"
           },
           {
@@ -786,7 +786,7 @@
             "scope": 1855,
             "src": "385:52:4",
             "stateMutability": "view",
-            "superFunction": 1973,
+            "superFunction": 1978,
             "visibility": "external"
           },
           {
@@ -868,7 +868,7 @@
             "scope": 1855,
             "src": "442:63:4",
             "stateMutability": "view",
-            "superFunction": 1980,
+            "superFunction": 1985,
             "visibility": "external"
           },
           {
@@ -977,7 +977,7 @@
             "scope": 1855,
             "src": "510:80:4",
             "stateMutability": "view",
-            "superFunction": 1989,
+            "superFunction": 1994,
             "visibility": "external"
           },
           {
@@ -1085,7 +1085,7 @@
             "scope": 1855,
             "src": "596:70:4",
             "stateMutability": "nonpayable",
-            "superFunction": 1998,
+            "superFunction": 2003,
             "visibility": "external"
           },
           {
@@ -1193,7 +1193,7 @@
             "scope": 1855,
             "src": "671:66:4",
             "stateMutability": "nonpayable",
-            "superFunction": 2007,
+            "superFunction": 2012,
             "visibility": "external"
           },
           {
@@ -1328,7 +1328,7 @@
             "scope": 1855,
             "src": "742:84:4",
             "stateMutability": "nonpayable",
-            "superFunction": 2018,
+            "superFunction": 2023,
             "visibility": "external"
           },
           {
@@ -1382,7 +1382,7 @@
             "scope": 1855,
             "src": "832:60:4",
             "stateMutability": "view",
-            "superFunction": 2023,
+            "superFunction": 2028,
             "visibility": "external"
           },
           {
@@ -1436,7 +1436,7 @@
             "scope": 1855,
             "src": "897:59:4",
             "stateMutability": "pure",
-            "superFunction": 2028,
+            "superFunction": 2033,
             "visibility": "external"
           },
           {
@@ -1518,7 +1518,7 @@
             "scope": 1855,
             "src": "961:60:4",
             "stateMutability": "view",
-            "superFunction": 2035,
+            "superFunction": 2040,
             "visibility": "external"
           },
           {
@@ -1730,7 +1730,7 @@
             "scope": 1855,
             "src": "1027:115:4",
             "stateMutability": "nonpayable",
-            "superFunction": 2052,
+            "superFunction": 2057,
             "visibility": "external"
           }
         ],
