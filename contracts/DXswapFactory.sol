@@ -7,6 +7,7 @@ contract DXswapFactory is IDXswapFactory {
     address public feeTo;
     address public feeToSetter;
     uint8 public protocolFeeDenominator = 5; // uses 0.05% (1/~6 of 0.30%) per trade as default
+    bytes32 public constant INIT_CODE_PAIR_HASH = keccak256(abi.encodePacked(type(DXswapPair).creationCode));
 
     mapping(address => mapping(address => address)) public getPair;
     address[] public allPairs;
