@@ -359,14 +359,14 @@
     "absolutePath": "contracts/test/ERC20.sol",
     "exportedSymbols": {
       "ERC20": [
-        2482
+        2487
       ]
     },
-    "id": 2483,
+    "id": 2488,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 2466,
+        "id": 2471,
         "literals": [
           "solidity",
           "=",
@@ -379,9 +379,9 @@
       {
         "absolutePath": "contracts/DXswapERC20.sol",
         "file": "../DXswapERC20.sol",
-        "id": 2467,
+        "id": 2472,
         "nodeType": "ImportDirective",
-        "scope": 2483,
+        "scope": 2488,
         "sourceUnit": 385,
         "src": "26:28:11",
         "symbolAliases": [],
@@ -393,7 +393,7 @@
             "arguments": null,
             "baseName": {
               "contractScope": null,
-              "id": 2468,
+              "id": 2473,
               "name": "DXswapERC20",
               "nodeType": "UserDefinedTypeName",
               "referencedDeclaration": 384,
@@ -403,7 +403,7 @@
                 "typeString": "contract DXswapERC20"
               }
             },
-            "id": 2469,
+            "id": 2474,
             "nodeType": "InheritanceSpecifier",
             "src": "74:11:11"
           }
@@ -415,9 +415,9 @@
         "contractKind": "contract",
         "documentation": null,
         "fullyImplemented": true,
-        "id": 2482,
+        "id": 2487,
         "linearizedBaseContracts": [
-          2482,
+          2487,
           384,
           1855
         ],
@@ -426,7 +426,7 @@
         "nodes": [
           {
             "body": {
-              "id": 2480,
+              "id": 2485,
               "nodeType": "Block",
               "src": "130:48:11",
               "statements": [
@@ -438,18 +438,18 @@
                         "argumentTypes": null,
                         "expression": {
                           "argumentTypes": null,
-                          "id": 2475,
+                          "id": 2480,
                           "name": "msg",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 2497,
+                          "referencedDeclaration": 2502,
                           "src": "146:3:11",
                           "typeDescriptions": {
                             "typeIdentifier": "t_magic_message",
                             "typeString": "msg"
                           }
                         },
-                        "id": 2476,
+                        "id": 2481,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
@@ -465,11 +465,11 @@
                       },
                       {
                         "argumentTypes": null,
-                        "id": 2477,
+                        "id": 2482,
                         "name": "_totalSupply",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 2471,
+                        "referencedDeclaration": 2476,
                         "src": "158:12:11",
                         "typeDescriptions": {
                           "typeIdentifier": "t_uint256",
@@ -488,7 +488,7 @@
                           "typeString": "uint256"
                         }
                       ],
-                      "id": 2474,
+                      "id": 2479,
                       "name": "_mint",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
@@ -499,7 +499,7 @@
                         "typeString": "function (address,uint256)"
                       }
                     },
-                    "id": 2478,
+                    "id": 2483,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -513,29 +513,29 @@
                       "typeString": "tuple()"
                     }
                   },
-                  "id": 2479,
+                  "id": 2484,
                   "nodeType": "ExpressionStatement",
                   "src": "140:31:11"
                 }
               ]
             },
             "documentation": null,
-            "id": 2481,
+            "id": 2486,
             "implemented": true,
             "kind": "constructor",
             "modifiers": [],
             "name": "",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 2472,
+              "id": 2477,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 2471,
+                  "id": 2476,
                   "name": "_totalSupply",
                   "nodeType": "VariableDeclaration",
-                  "scope": 2481,
+                  "scope": 2486,
                   "src": "104:17:11",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -544,7 +544,7 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 2470,
+                    "id": 2475,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
                     "src": "104:4:11",
@@ -560,19 +560,19 @@
               "src": "103:19:11"
             },
             "returnParameters": {
-              "id": 2473,
+              "id": 2478,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "130:0:11"
             },
-            "scope": 2482,
+            "scope": 2487,
             "src": "92:86:11",
             "stateMutability": "nonpayable",
             "superFunction": null,
             "visibility": "public"
           }
         ],
-        "scope": 2483,
+        "scope": 2488,
         "src": "56:124:11"
       }
     ],
