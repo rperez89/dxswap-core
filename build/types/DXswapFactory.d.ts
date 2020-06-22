@@ -21,6 +21,8 @@ export class DXswapFactory extends Contract {
   );
   clone(): DXswapFactory;
   methods: {
+    INIT_CODE_PAIR_HASH(): TransactionObject<string>;
+
     allPairs(arg0: number | string): TransactionObject<string>;
 
     allPairsLength(): TransactionObject<string>;

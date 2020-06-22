@@ -41,14 +41,14 @@
     "absolutePath": "contracts/interfaces/IDXswapCallee.sol",
     "exportedSymbols": {
       "IDXswapCallee": [
-        1726
+        1737
       ]
     },
-    "id": 1727,
+    "id": 1738,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 1714,
+        "id": 1725,
         "literals": [
           "solidity",
           ">=",
@@ -64,9 +64,9 @@
         "contractKind": "interface",
         "documentation": null,
         "fullyImplemented": false,
-        "id": 1726,
+        "id": 1737,
         "linearizedBaseContracts": [
-          1726
+          1737
         ],
         "name": "IDXswapCallee",
         "nodeType": "ContractDefinition",
@@ -74,22 +74,22 @@
           {
             "body": null,
             "documentation": null,
-            "id": 1725,
+            "id": 1736,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "DXswapCall",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 1723,
+              "id": 1734,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 1716,
+                  "id": 1727,
                   "name": "sender",
                   "nodeType": "VariableDeclaration",
-                  "scope": 1725,
+                  "scope": 1736,
                   "src": "76:14:3",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -98,7 +98,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 1715,
+                    "id": 1726,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "76:7:3",
@@ -113,10 +113,10 @@
                 },
                 {
                   "constant": false,
-                  "id": 1718,
+                  "id": 1729,
                   "name": "amount0",
                   "nodeType": "VariableDeclaration",
-                  "scope": 1725,
+                  "scope": 1736,
                   "src": "92:12:3",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -125,7 +125,7 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 1717,
+                    "id": 1728,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
                     "src": "92:4:3",
@@ -139,10 +139,10 @@
                 },
                 {
                   "constant": false,
-                  "id": 1720,
+                  "id": 1731,
                   "name": "amount1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 1725,
+                  "scope": 1736,
                   "src": "106:12:3",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -151,7 +151,7 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 1719,
+                    "id": 1730,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
                     "src": "106:4:3",
@@ -165,10 +165,10 @@
                 },
                 {
                   "constant": false,
-                  "id": 1722,
+                  "id": 1733,
                   "name": "data",
                   "nodeType": "VariableDeclaration",
-                  "scope": 1725,
+                  "scope": 1736,
                   "src": "120:19:3",
                   "stateVariable": false,
                   "storageLocation": "calldata",
@@ -177,7 +177,7 @@
                     "typeString": "bytes"
                   },
                   "typeName": {
-                    "id": 1721,
+                    "id": 1732,
                     "name": "bytes",
                     "nodeType": "ElementaryTypeName",
                     "src": "120:5:3",
@@ -193,19 +193,19 @@
               "src": "75:65:3"
             },
             "returnParameters": {
-              "id": 1724,
+              "id": 1735,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "149:0:3"
             },
-            "scope": 1726,
+            "scope": 1737,
             "src": "56:94:3",
             "stateMutability": "nonpayable",
             "superFunction": null,
             "visibility": "external"
           }
         ],
-        "scope": 1727,
+        "scope": 1738,
         "src": "26:126:3"
       }
     ],
