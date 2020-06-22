@@ -31,10 +31,11 @@ describe('DXswapFactory', () => {
     factory = fixture.factory
   })
 
-  it('feeTo, feeToSetter, allPairsLength', async () => {
+  it('feeTo, feeToSetter, allPairsLength, INIT_CODE_PAIR_HASH', async () => {
     expect(await factory.feeTo()).to.eq(AddressZero)
     expect(await factory.feeToSetter()).to.eq(wallet.address)
     expect(await factory.allPairsLength()).to.eq(0)
+    expect(await factory.INIT_CODE_PAIR_HASH()).to.eq('0xc12df094d952118426a3680de1a396a7cfeff86597d53f897ddc5e0e4aeef5fd')
   })
 
   async function createPair(tokens: [string, string]) {
