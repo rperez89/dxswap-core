@@ -3815,5 +3815,13 @@
       "runs": 200
     },
     "evmVersion": "istanbul"
+  },
+  "networks": {
+    "42": {
+      "links": {},
+      "events": {},
+      "address": "0x93F860a4810c2172C897B369260E3Ecc20a9e83f",
+      "updated_at": 1592848874899
+    }
   }
 }
