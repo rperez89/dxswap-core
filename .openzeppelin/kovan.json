@@ -268,9 +268,9 @@
     ],
     "dxswap-core/DXswapFactory": [
       {
-        "address": "0x93F860a4810c2172C897B369260E3Ecc20a9e83f",
+        "address": "0x5CFc35C07Ca81CCe087e1fEa81096c4A58eE8Ee2",
         "kind": "NonProxy",
-        "bytecodeHash": "b60031a9d419eb18d0bdc8ebcca8ae415eb9c9b817719e888002c9599d6946cc"
+        "bytecodeHash": "081fd6b4b401a39bf7353cb01c5123ef3e4a16f3262f39776b2534ebb0c3322c"
       }
     ]
   },
