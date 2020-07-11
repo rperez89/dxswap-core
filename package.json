@@ -1,41 +1,45 @@
 {
-  "name": "@uniswap/v2-core",
-  "description": "Core contracts for the UniswapV2 protocol",
-  "version": "1.0.0",
-  "homepage": "https://uniswap.org",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/Uniswap/uniswap-v2-core"
-  },
+  "name": "dxswap-core",
+  "version": "0.1.0",
   "files": [
     "contracts",
-    "build"
+    "build",
+    ".openzeppelin/project.json",
+    ".openzeppelin/kovan.json"
   ],
   "engines": {
     "node": ">=10"
   },
   "devDependencies": {
+    "@openzeppelin/cli": "^2.8.2",
     "@types/chai": "^4.2.6",
     "@types/mocha": "^5.2.7",
     "chai": "^4.2.0",
+    "dotenv": "^8.2.0",
     "ethereum-waffle": "^2.4.1",
     "ethereumjs-util": "^6.2.0",
+    "ethers": "^4.0.45",
     "mocha": "^6.2.2",
     "prettier": "^1.19.1",
     "rimraf": "^3.0.0",
     "solc": "0.5.16",
-    "ts-node": "^8.5.4",
-    "typescript": "^3.7.3"
+    "truffle-flattener": "^1.4.4",
+    "truffle-hdwallet-provider": "^1.0.17",
+    "ts-node": "^8.5.4"
   },
   "scripts": {
     "lint": "yarn prettier ./test/*.ts --check",
     "lint:fix": "yarn prettier ./test/*.ts --write",
     "clean": "rimraf ./build/",
     "precompile": "yarn clean",
-    "compile": "waffle .waffle.json",
+    "compile": "npx oz compile",
     "pretest": "yarn compile",
     "test": "mocha",
-    "prepublishOnly": "yarn test"
+    "prepublishOnly": "yarn test",
+    "flattener": "./scripts/flattener.sh"
   },
-  "license": "GPL-3.0-or-later"
+  "license": "AGPL-3.0-or-later",
+  "dependencies": {
+    "typescript": "^3.9.5"
+  }
 }

@@ -1,9 +1,11 @@
 pragma solidity >=0.5.0;
 
-interface IUniswapV2Factory {
+interface IDXswapFactory {
     event PairCreated(address indexed token0, address indexed token1, address pair, uint);
 
+    function INIT_CODE_PAIR_HASH() external pure returns (bytes32);
     function feeTo() external view returns (address);
+    function protocolFeeDenominator() external view returns (uint8);
     function feeToSetter() external view returns (address);
 
     function getPair(address tokenA, address tokenB) external view returns (address pair);
@@ -14,4 +16,6 @@ interface IUniswapV2Factory {
 
     function setFeeTo(address) external;
     function setFeeToSetter(address) external;
+    function setProtocolFee(uint8 _protocolFee) external;
+    function setSwapFee(address pair, uint8 swapFee) external;
 }

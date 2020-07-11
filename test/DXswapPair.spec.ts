@@ -8,6 +8,7 @@ import { pairFixture } from './shared/fixtures'
 import { AddressZero } from 'ethers/constants'
 
 const MINIMUM_LIQUIDITY = bigNumberify(10).pow(3)
+const ROUND_EXCEPTION = bigNumberify(10).pow(4)
 
 chai.use(solidity)
 
@@ -15,7 +16,7 @@ const overrides = {
   gasLimit: 9999999
 }
 
-describe('UniswapV2Pair', () => {
+describe('DXswapPair', () => {
   const provider = new MockProvider({
     hardfork: 'istanbul',
     mnemonic: 'horn horn horn horn horn horn horn horn horn horn horn horn',
@@ -84,7 +85,7 @@ describe('UniswapV2Pair', () => {
       await addLiquidity(token0Amount, token1Amount)
       await token0.transfer(pair.address, swapAmount)
       await expect(pair.swap(0, expectedOutputAmount.add(1), wallet.address, '0x', overrides)).to.be.revertedWith(
-        'UniswapV2: K'
+        'DXswapPair: K'
       )
       await pair.swap(0, expectedOutputAmount, wallet.address, '0x', overrides)
     })
@@ -102,7 +103,7 @@ describe('UniswapV2Pair', () => {
       await addLiquidity(token0Amount, token1Amount)
       await token0.transfer(pair.address, inputAmount)
       await expect(pair.swap(outputAmount.add(1), 0, wallet.address, '0x', overrides)).to.be.revertedWith(
-        'UniswapV2: K'
+        'DXswapPair: K'
       )
       await pair.swap(outputAmount, 0, wallet.address, '0x', overrides)
     })
@@ -177,7 +178,7 @@ describe('UniswapV2Pair', () => {
     await mineBlock(provider, (await provider.getBlock('latest')).timestamp + 1)
     const tx = await pair.swap(expectedOutputAmount, 0, wallet.address, '0x', overrides)
     const receipt = await tx.wait()
-    expect(receipt.gasUsed).to.eq(73462)
+    expect(receipt.gasUsed).to.eq(76461)
   })
 
   it('burn', async () => {
@@ -280,5 +281,68 @@ describe('UniswapV2Pair', () => {
     // ...because the initial liquidity amounts were equal
     expect(await token0.balanceOf(pair.address)).to.eq(bigNumberify(1000).add('249501683697445'))
     expect(await token1.balanceOf(pair.address)).to.eq(bigNumberify(1000).add('250000187312969'))
+  })
+  
+  it('feeTo:on:0.025', async () => {
+    await factory.setFeeTo(other.address)
+    await factory.setProtocolFee(11)
+
+    const token0Amount = expandTo18Decimals(1000)
+    const token1Amount = expandTo18Decimals(1000)
+    await addLiquidity(token0Amount, token1Amount)
+
+    const swapAmount = expandTo18Decimals(1)
+    const expectedOutputAmount = bigNumberify('996006981039903216')
+    await token1.transfer(pair.address, swapAmount)
+    await pair.swap(expectedOutputAmount, 0, wallet.address, '0x', overrides)
+
+    const expectedLiquidity = expandTo18Decimals(1000)
+    await pair.transfer(pair.address, expectedLiquidity.sub(MINIMUM_LIQUIDITY))
+    await pair.burn(wallet.address, overrides)
+    const expectedTotalSupply = bigNumberify('124875234033868')
+
+    expect((await pair.totalSupply()).div(ROUND_EXCEPTION))
+      .to.eq(MINIMUM_LIQUIDITY.add(expectedTotalSupply).div(ROUND_EXCEPTION))
+    expect((await pair.balanceOf(other.address)).div(ROUND_EXCEPTION))
+      .to.eq((expectedTotalSupply).div(ROUND_EXCEPTION))
+
+    // using 1000 here instead of the symbolic MINIMUM_LIQUIDITY because the amounts only happen to be equal...
+    // ...because the initial liquidity amounts were equal
+    expect((await token0.balanceOf(pair.address)).div(ROUND_EXCEPTION))
+      .to.eq(bigNumberify(1000).add('124750841848722').div(ROUND_EXCEPTION))
+    expect((await token1.balanceOf(pair.address)).div(ROUND_EXCEPTION))
+      .to.eq(bigNumberify(1000).add('125000093656485').div(ROUND_EXCEPTION))
+  })
+  
+  it('feeTo:on:0.1:swapFee:0.20', async () => {
+    await factory.setFeeTo(other.address)
+    await factory.setProtocolFee(1)
+    await factory.setSwapFee(pair.address, 20)
+
+    const token0Amount = expandTo18Decimals(1000)
+    const token1Amount = expandTo18Decimals(1000)
+    await addLiquidity(token0Amount, token1Amount)
+
+    const swapAmount = expandTo18Decimals(1)
+    const expectedOutputAmount = swapAmount.mul(98).div(100)
+    await token1.transfer(pair.address, swapAmount)
+    await pair.swap(expectedOutputAmount, 0, wallet.address, '0x', overrides)
+
+    const expectedLiquidity = expandTo18Decimals(1000)
+    await pair.transfer(pair.address, expectedLiquidity.sub(MINIMUM_LIQUIDITY))
+    await pair.burn(wallet.address, overrides)
+    const expectedTotalSupply = bigNumberify('4754954780487545')
+
+    expect((await pair.totalSupply()).div(ROUND_EXCEPTION))
+      .to.eq(MINIMUM_LIQUIDITY.add(expectedTotalSupply).div(ROUND_EXCEPTION))
+    expect((await pair.balanceOf(other.address)).div(ROUND_EXCEPTION))
+      .to.eq((expectedTotalSupply).div(ROUND_EXCEPTION))
+
+    // using 1000 here instead of the symbolic MINIMUM_LIQUIDITY because the amounts only happen to be equal...
+    // ...because the initial liquidity amounts were equal
+    expect((await token0.balanceOf(pair.address)).div(ROUND_EXCEPTION))
+      .to.eq(bigNumberify(1000).add('4750272337472507').div(ROUND_EXCEPTION))
+    expect((await token1.balanceOf(pair.address)).div(ROUND_EXCEPTION))
+      .to.eq(bigNumberify(1000).add('4759687103171089').div(ROUND_EXCEPTION))
   })
 })
