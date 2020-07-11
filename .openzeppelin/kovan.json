@@ -1,11 +1,11 @@
 {
   "contracts": {
     "DXswapPair": {
-      "address": "0x285b7692fba74304f7CCddDB810d98207fc81BC7",
+      "address": "0xbba81f90C8AE4430578Ef4edFFccFF4712ADcc9B",
       "constructorCode": "6080604052600c805460ff1916601e1790556001600d5534801561002257600080fd5b50604051469080605261254c8239604080519182900360520182208282018252600683526504458737761760d41b6020938401528151808301835260018152603160f81b908401528151808401919091527f3649d708a7abf9e212d0a587955ead4123223014b2e46201dfb587457cbd4591818301527fc89efdaa54c0f20c7adf612882df0950f5a951637e0307cdcb4c672f298b8bc6606082015260808101949094523060a0808601919091528151808603909101815260c09094019052825192019190912060035550600580546001600160a01b0319163317905561243e8061010e6000396000f3fe",
-      "bodyBytecodeHash": "492448f6e82998c48e46b3dd00a943eca65c1c72b79fcec2dab455fc46eecd93",
-      "localBytecodeHash": "1c464acbc5aea3eb9afb63f7b5d9311681de7707955f478313fa4327346954ce",
-      "deployedBytecodeHash": "1c464acbc5aea3eb9afb63f7b5d9311681de7707955f478313fa4327346954ce",
+      "bodyBytecodeHash": "ab6f97fffb9c334d0cf6a1adeebb3091523e547fe6fbfa9b0d93b18fd73915eb",
+      "localBytecodeHash": "6fae7066f4e121db8700267c9fdf8abe61dbf15269f0d2b9aa519b4545a8a652",
+      "deployedBytecodeHash": "6fae7066f4e121db8700267c9fdf8abe61dbf15269f0d2b9aa519b4545a8a652",
       "types": {
         "t_uint256": {
           "id": "t_uint256",
@@ -89,7 +89,7 @@
           "contract": "DXswapPair",
           "path": "contracts/DXswapPair.sol",
           "label": "factory",
-          "astId": 665,
+          "astId": 676,
           "type": "t_address",
           "src": "543:22:2"
         },
@@ -97,7 +97,7 @@
           "contract": "DXswapPair",
           "path": "contracts/DXswapPair.sol",
           "label": "token0",
-          "astId": 667,
+          "astId": 678,
           "type": "t_address",
           "src": "571:21:2"
         },
@@ -105,7 +105,7 @@
           "contract": "DXswapPair",
           "path": "contracts/DXswapPair.sol",
           "label": "token1",
-          "astId": 669,
+          "astId": 680,
           "type": "t_address",
           "src": "598:21:2"
         },
@@ -113,7 +113,7 @@
           "contract": "DXswapPair",
           "path": "contracts/DXswapPair.sol",
           "label": "reserve0",
-          "astId": 671,
+          "astId": 682,
           "type": "t_uint112",
           "src": "626:24:2"
         },
@@ -121,7 +121,7 @@
           "contract": "DXswapPair",
           "path": "contracts/DXswapPair.sol",
           "label": "reserve1",
-          "astId": 673,
+          "astId": 684,
           "type": "t_uint112",
           "src": "722:24:2"
         },
@@ -129,7 +129,7 @@
           "contract": "DXswapPair",
           "path": "contracts/DXswapPair.sol",
           "label": "blockTimestampLast",
-          "astId": 675,
+          "astId": 686,
           "type": "t_uint32",
           "src": "818:34:2"
         },
@@ -137,7 +137,7 @@
           "contract": "DXswapPair",
           "path": "contracts/DXswapPair.sol",
           "label": "price0CumulativeLast",
-          "astId": 677,
+          "astId": 688,
           "type": "t_uint256",
           "src": "915:32:2"
         },
@@ -145,7 +145,7 @@
           "contract": "DXswapPair",
           "path": "contracts/DXswapPair.sol",
           "label": "price1CumulativeLast",
-          "astId": 679,
+          "astId": 690,
           "type": "t_uint256",
           "src": "953:32:2"
         },
@@ -153,7 +153,7 @@
           "contract": "DXswapPair",
           "path": "contracts/DXswapPair.sol",
           "label": "kLast",
-          "astId": 681,
+          "astId": 692,
           "type": "t_uint256",
           "src": "991:17:2"
         },
@@ -161,7 +161,7 @@
           "contract": "DXswapPair",
           "path": "contracts/DXswapPair.sol",
           "label": "swapFee",
-          "astId": 684,
+          "astId": 695,
           "type": "t_uint8",
           "src": "1094:25:2"
         },
@@ -169,7 +169,7 @@
           "contract": "DXswapPair",
           "path": "contracts/DXswapPair.sol",
           "label": "unlocked",
-          "astId": 687,
+          "astId": 698,
           "type": "t_uint256",
           "src": "1158:25:2"
         }
@@ -179,7 +179,9 @@
         "hasSelfDestruct": false,
         "hasDelegateCall": false,
         "hasInitialValuesInDeclarations": true,
-        "uninitializedBaseContracts": []
+        "uninitializedBaseContracts": [],
+        "storageUncheckedVars": [],
+        "storageDiff": []
       }
     },
     "DXswapERC20": {
@@ -268,7 +270,7 @@
     ],
     "dxswap-core/DXswapFactory": [
       {
-        "address": "0x5CFc35C07Ca81CCe087e1fEa81096c4A58eE8Ee2",
+        "address": "0x1eAcA5a0D7af081ed746964404D7996F34f39616",
         "kind": "NonProxy",
         "bytecodeHash": "081fd6b4b401a39bf7353cb01c5123ef3e4a16f3262f39776b2534ebb0c3322c"
       }

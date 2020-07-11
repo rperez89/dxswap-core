@@ -1,6 +1,6 @@
 {
   "name": "dxswap-core",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "files": [
     "contracts",
     "build",
@@ -38,7 +38,7 @@
     "prepublishOnly": "yarn test",
     "flattener": "./scripts/flattener.sh"
   },
-  "license": "GPL-3.0-or-later",
+  "license": "AGPL-3.0-or-later",
   "dependencies": {
     "typescript": "^3.9.5"
   }
