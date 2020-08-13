@@ -266,7 +266,7 @@
         "address": "0xed2b33783536Bf12F7865d74Ea907275a79cE05C",
         "kind": "NonProxy",
         "bytecodeHash": "f5c2b34009367c61f9ad2cbc349fedacd40be460a26dc1e5cbd32508699caa4d"
-      },
+      }
     ],
     "dxswap-core/DXswapPair": [
       {
