@@ -72,8 +72,8 @@ contract DXswapPair is IDXswapPair, DXswapERC20 {
     
     // called by the factory to set the swapFee
     function setSwapFee(uint8 _swapFee) external {
-        require(msg.sender == factory, 'UniswapV2: FORBIDDEN'); // sufficient check
-        require(_swapFee <= 30, 'UniswapV2: FORBIDDEN_FEE'); // fee percentage check
+        require(msg.sender == factory, 'DXswapPair: FORBIDDEN'); // sufficient check
+        require(_swapFee <= 30, 'DXswapPair: FORBIDDEN_FEE'); // fee percentage check
         swapFee = _swapFee;
     }
 
