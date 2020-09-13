@@ -35,7 +35,7 @@ describe('DXswapFactory', () => {
     expect(await factory.feeTo()).to.eq(AddressZero)
     expect(await factory.feeToSetter()).to.eq(wallet.address)
     expect(await factory.allPairsLength()).to.eq(0)
-    expect(await factory.INIT_CODE_PAIR_HASH()).to.eq('0xb0684f1b0fba5d87fe556c21dfae31932c0bf63ec050742e69a058b875af50b0')
+    expect(await factory.INIT_CODE_PAIR_HASH()).to.eq('0x4c20629ebcef2ca90eca58352189646ccb0b5c4f8763a0772e16b3db5a0e4fea')
   })
 
   async function createPair(tokens: [string, string]) {

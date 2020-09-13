@@ -26,7 +26,7 @@ contract DXswapPair is IDXswapPair, DXswapERC20 {
     uint public price0CumulativeLast;
     uint public price1CumulativeLast;
     uint public kLast; // reserve0 * reserve1, as of immediately after the most recent liquidity event
-    uint8 public swapFee = 30; // uses 0.3% fee as default
+    uint8 public swapFee = 25; // uses 0.25% fee as default
     
     uint private unlocked = 1;
     modifier lock() {
