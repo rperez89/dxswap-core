@@ -55,7 +55,7 @@ contract DXswapFactory is IDXswapFactory {
         protocolFeeDenominator = _protocolFeeDenominator;
     }
     
-    function setSwapFee(address _pair, uint8 _swapFee) external {
+    function setSwapFee(address _pair, uint32 _swapFee) external {
         require(msg.sender == feeToSetter, 'DXswapFactory: FORBIDDEN');
         IDXswapPair(_pair).setSwapFee(_swapFee);
     }

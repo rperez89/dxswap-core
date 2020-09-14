@@ -183,7 +183,7 @@ describe('DXswapPair', () => {
     await mineBlock(provider, (await provider.getBlock('latest')).timestamp + 1)
     const tx = await pair.swap(expectedOutputAmount, 0, wallet.address, '0x', overrides)
     const receipt = await tx.wait()
-    expect(receipt.gasUsed).to.eq(76461)
+    expect(receipt.gasUsed).to.eq(76473)
   })
 
   it('burn', async () => {
@@ -349,5 +349,13 @@ describe('DXswapPair', () => {
       .to.eq(bigNumberify(1000).add('4750272337472507').div(ROUND_EXCEPTION))
     expect((await token1.balanceOf(pair.address)).div(ROUND_EXCEPTION))
       .to.eq(bigNumberify(1000).add('4759687103171089').div(ROUND_EXCEPTION))
+  })
+  
+  it('fail on trying to set swap fee higher than 10%', async () => {
+    await factory.setSwapFee(pair.address, 0)
+    await factory.setSwapFee(pair.address, 1000)
+    await expect(factory.setSwapFee(pair.address, 1001)).to.be.revertedWith(
+      'DXswapPair: FORBIDDEN_FEE'
+    )
   })
 })
