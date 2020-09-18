@@ -48,21 +48,37 @@ describe('DXswapDeployer', () => {
     )
     expect(await dxSwapDeployer.state()).to.eq(0)
     
+    // Dont allow other address to approve deployment by sending eth
+    await expect(other.sendTransaction({to: dxSwapDeployer.address, gasPrice: 0, value: expandTo18Decimals(10000)}))
+      .to.be.revertedWith('DXswapDeployer: CALLER_NOT_FEE_TO_SETTER')
+    
+    // Dont allow deploy before being approved by sending ETH
+    await expect(dxSwapDeployer.connect(other).deploy())
+      .to.be.revertedWith('DXswapDeployer: WRONG_DEPLOYER_STATE')
+
     // Send transaction with value from dxdao to approve deployment
     await dxdao.sendTransaction({to: dxSwapDeployer.address, gasPrice: 0, value: expandTo18Decimals(10000)})
     expect(await dxSwapDeployer.state()).to.eq(1)
     
     // Dont allow sending more value
     await expect(dxdao.sendTransaction({to: dxSwapDeployer.address, gasPrice: 0, value: expandTo18Decimals(10000)}))
-      .to.be.reverted
+      .to.be.revertedWith('DXswapDeployer: WRONG_DEPLOYER_STATE')
+    await expect(other.sendTransaction({to: dxSwapDeployer.address, gasPrice: 0, value: expandTo18Decimals(10000)}))
+      .to.be.revertedWith('DXswapDeployer: WRONG_DEPLOYER_STATE')
 
     // Execute deployment transaction
     const deployTx = await dxSwapDeployer.connect(other).deploy()
     expect(await dxSwapDeployer.state()).to.eq(2)
     const deployTxReceipt = await provider.getTransactionReceipt(deployTx.hash);
     
-    // Dont allow running dpeloyment again
-    await expect(dxSwapDeployer.connect(other).deploy()).to.be.reverted
+    // Dont allow sending more value
+    await expect(dxdao.sendTransaction({to: dxSwapDeployer.address, gasPrice: 0, value: expandTo18Decimals(10000)}))
+      .to.be.revertedWith('DXswapDeployer: WRONG_DEPLOYER_STATE')
+    await expect(other.sendTransaction({to: dxSwapDeployer.address, gasPrice: 0, value: expandTo18Decimals(10000)}))
+      .to.be.revertedWith('DXswapDeployer: WRONG_DEPLOYER_STATE')
+    
+    // Dont allow running deployment again
+    await expect(dxSwapDeployer.connect(other).deploy()).to.be.revertedWith('DXswapDeployer: WRONG_DEPLOYER_STATE')
     
     // Get addresses from events
     const pairFactoryAddress = deployTxReceipt.logs != undefined 
