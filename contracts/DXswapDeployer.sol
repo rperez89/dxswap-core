@@ -41,14 +41,14 @@ contract DXswapDeployer {
     
     // Step 2: Transfer ETH from the DXdao avatar to allow the deploy function to be called.
     function() external payable {
-        require(state == 0);
+        require(state == 0, 'DXswapDeployer: WRONG_DEPLOYER_STATE');
         require(msg.sender == dxdaoAvatar, 'DXswapDeployer: CALLER_NOT_FEE_TO_SETTER');
         state = 1;
     }
     
     // Step 3: Deploy DXswapFactory and all initial pairs
     function deploy() public {
-        require(state == 1);
+        require(state == 1, 'DXswapDeployer: WRONG_DEPLOYER_STATE');
         DXswapFactory dxSwapFactory = new DXswapFactory(address(this));
         emit PairFactoryDeployed(address(dxSwapFactory));
         for(uint8 i = 0; i < initialTokenPairs.length; i ++) {
