@@ -85,7 +85,7 @@ describe('DXswapPair', () => {
       const [swapAmount, token0Amount, token1Amount] = swapTestCase
       await addLiquidity(token0Amount, token1Amount)
       await token0.transfer(pair.address, swapAmount)
-      const amountInWithFee = swapAmount.mul(FEE_DENOMINATOR.sub(25));
+      const amountInWithFee = swapAmount.mul(FEE_DENOMINATOR.sub(15));
       const numerator = amountInWithFee.mul(token1Amount);
       const denominator = token0Amount.mul(FEE_DENOMINATOR).add(amountInWithFee);
       const amountOut = numerator.div(denominator);
@@ -97,10 +97,10 @@ describe('DXswapPair', () => {
   })
 
   const optimisticTestCases: BigNumber[][] = [
-    ['997500000000000000', 5, 10, 1], // given amountIn, amountOut = floor(amountIn * .9975)
-    ['997500000000000000', 10, 5, 1],
-    ['997500000000000000', 5, 5, 1],
-    [1, 5, 5, '1002506265664160401'] // given amountOut, amountIn = ceiling(amountOut / .9975)
+    ['998500000000000000', 5, 10, 1], // given amountIn, amountOut = floor(amountIn * .9985)
+    ['998500000000000000', 10, 5, 1],
+    ['998500000000000000', 5, 5, 1],
+    [1, 5, 5, '1001502253380070105'] // given amountOut, amountIn = ceiling(amountOut / .9985)
   ].map(a => a.map(n => (typeof n === 'string' ? bigNumberify(n) : expandTo18Decimals(n))))
   optimisticTestCases.forEach((optimisticTestCase, i) => {
     it(`optimistic:${i}`, async () => {
