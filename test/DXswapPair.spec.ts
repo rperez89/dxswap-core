@@ -273,18 +273,22 @@ describe('DXswapPair', () => {
     expect(await token0.balanceOf(pair.address)).to.eq(expandTo18Decimals(1000))
     expect(await token1.balanceOf(pair.address)).to.eq(expandTo18Decimals(1000))
     expect(await token0.balanceOf(wallet.address)).to.eq(expandTo18Decimals(9000))
-    expect(await token1.balanceOf(wallet.address)).to.eq(expandTo18Decimals(9000))    
+    expect(await token1.balanceOf(wallet.address)).to.eq(expandTo18Decimals(9000))
     
     // Attack pool
     await token1.transfer(pair.address, expandTo18Decimals(1))
-    await pair.swap(expandTo18Decimals(999), 0, wallet.address, '0x', overrides)
+    await expect(pair.swap(expandTo18Decimals(999), 0, wallet.address, '0x', overrides)).to.be.revertedWith(
+      'DXswapPair: K'
+    )
     await token0.transfer(pair.address, expandTo18Decimals(1))
-    await pair.swap(0, expandTo18Decimals(999), wallet.address, '0x', overrides)
+    await expect(pair.swap(0, expandTo18Decimals(999), wallet.address, '0x', overrides)).to.be.revertedWith(
+      'DXswapPair: K'
+    )
 
-    expect(await token0.balanceOf(pair.address)).to.eq(expandTo18Decimals(2))
-    expect(await token1.balanceOf(pair.address)).to.eq(expandTo18Decimals(2))
-    expect(await token0.balanceOf(wallet.address)).to.eq(expandTo18Decimals(9998))
-    expect(await token1.balanceOf(wallet.address)).to.eq(expandTo18Decimals(9998))
+    expect(await token0.balanceOf(pair.address)).to.eq(expandTo18Decimals(1001))
+    expect(await token1.balanceOf(pair.address)).to.eq(expandTo18Decimals(1001))
+    expect(await token0.balanceOf(wallet.address)).to.eq(expandTo18Decimals(8999))
+    expect(await token1.balanceOf(wallet.address)).to.eq(expandTo18Decimals(8999)) 
     
     const expectedLiquidity = expandTo18Decimals(1000)
     await pair.transfer(pair.address, expectedLiquidity.sub(MINIMUM_LIQUIDITY))
