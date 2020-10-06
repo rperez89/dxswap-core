@@ -90,22 +90,13 @@ describe('DynamicFees', () => {
     const kReserve = token0Reserve.mul(token1Reserve)
     
     const token0Out = token0Reserve.sub(
-      kReserve.div(token1Reserve.add(token1In))
-    )
+      kReserve.div(token1Reserve.add(token1In.mul(SWAP_DEN.sub(swapFee)).div(SWAP_DEN)))
+    ).sub(bigNumberify(1))
     const token1Out = token1Reserve.sub(
-      kReserve.div(token0Reserve.add(token0In))
-    )
+      kReserve.div(token0Reserve.add(token0In.mul(SWAP_DEN.sub(swapFee)).div(SWAP_DEN)))
+    ).sub(bigNumberify(1))
 
-    const token0OutWithFee = token0Out.mul(SWAP_DEN.sub(swapFee)).div(SWAP_DEN)
-    const token1OutWithFee = token1Out.mul(SWAP_DEN.sub(swapFee)).div(SWAP_DEN)
-
-    return {
-      total: [token0OutWithFee, token1OutWithFee],
-      fee: [
-        token0Out.sub(token0OutWithFee),
-        token1Out.sub(token1OutWithFee)
-      ]
-    }
+    return [token0Out < 0 ? bigNumberify(0) : token0Out, token1Out < 0 ? bigNumberify(0) : token1Out];
   }
   
   // Execute a transfer and swap, since the tokens has to be transfered before traded
@@ -117,21 +108,17 @@ describe('DynamicFees', () => {
     if (_token1In.gt(0))
       await token1.transfer(pair.address, _token1In)
     const outputs = await calcOutput(_token0In, _token1In);
-    await pair.swap(
-      outputs.total[0],
-      outputs.total[1], 
-      wallet.address, '0x', overrides
-    )
+    await pair.swap(outputs[0], outputs[1], wallet.address, '0x', overrides)
     
     // Check value swaped between wallet and pair
-    expect(await token0.balanceOf(pair.address)).to.eq(reserveBefore[0].add(_token0In).sub(outputs.total[0]))
-    expect(await token1.balanceOf(pair.address)).to.eq(reserveBefore[1].add(_token1In).sub(outputs.total[1]))
+    expect(await token0.balanceOf(pair.address)).to.eq(reserveBefore[0].add(_token0In).sub(outputs[0]))
+    expect(await token1.balanceOf(pair.address)).to.eq(reserveBefore[1].add(_token1In).sub(outputs[1]))
     const totalSupplyToken0 = await token0.totalSupply()
     const totalSupplyToken1 = await token1.totalSupply()
     expect(await token0.balanceOf(wallet.address))
-      .to.eq(totalSupplyToken0.sub(reserveBefore[0]).sub(_token0In).add(outputs.total[0]))
+      .to.eq(totalSupplyToken0.sub(reserveBefore[0]).sub(_token0In).add(outputs[0]))
     expect(await token1.balanceOf(wallet.address))
-      .to.eq(totalSupplyToken1.sub(reserveBefore[1]).sub(_token1In).add(outputs.total[1]))
+      .to.eq(totalSupplyToken1.sub(reserveBefore[1]).sub(_token1In).add(outputs[1]))
     
     return outputs;
   }

@@ -183,7 +183,7 @@ describe('DXswapPair', () => {
     await mineBlock(provider, (await provider.getBlock('latest')).timestamp + 1)
     const tx = await pair.swap(expectedOutputAmount, 0, wallet.address, '0x', overrides)
     const receipt = await tx.wait()
-    expect(receipt.gasUsed).to.eq(76473)
+    expect(receipt.gasUsed).to.eq(75647)
   })
 
   it('burn', async () => {
@@ -258,6 +258,38 @@ describe('DXswapPair', () => {
     await token1.transfer(pair.address, swapAmount)
     await pair.swap(expectedOutputAmount, 0, wallet.address, '0x', overrides)
 
+    const expectedLiquidity = expandTo18Decimals(1000)
+    await pair.transfer(pair.address, expectedLiquidity.sub(MINIMUM_LIQUIDITY))
+    await pair.burn(wallet.address, overrides)
+    expect(await pair.totalSupply()).to.eq(MINIMUM_LIQUIDITY)
+  })
+  
+  it('feeTo:off, swapFee:0 attack', async () => {
+    await factory.setSwapFee(pair.address, 0)
+    const token0Amount = expandTo18Decimals(1000)
+    const token1Amount = expandTo18Decimals(1000)
+    await addLiquidity(token0Amount, token1Amount)
+    
+    expect(await token0.balanceOf(pair.address)).to.eq(expandTo18Decimals(1000))
+    expect(await token1.balanceOf(pair.address)).to.eq(expandTo18Decimals(1000))
+    expect(await token0.balanceOf(wallet.address)).to.eq(expandTo18Decimals(9000))
+    expect(await token1.balanceOf(wallet.address)).to.eq(expandTo18Decimals(9000))
+    
+    // Attack pool
+    await token1.transfer(pair.address, expandTo18Decimals(1))
+    await expect(pair.swap(expandTo18Decimals(999), 0, wallet.address, '0x', overrides)).to.be.revertedWith(
+      'DXswapPair: K'
+    )
+    await token0.transfer(pair.address, expandTo18Decimals(1))
+    await expect(pair.swap(0, expandTo18Decimals(999), wallet.address, '0x', overrides)).to.be.revertedWith(
+      'DXswapPair: K'
+    )
+
+    expect(await token0.balanceOf(pair.address)).to.eq(expandTo18Decimals(1001))
+    expect(await token1.balanceOf(pair.address)).to.eq(expandTo18Decimals(1001))
+    expect(await token0.balanceOf(wallet.address)).to.eq(expandTo18Decimals(8999))
+    expect(await token1.balanceOf(wallet.address)).to.eq(expandTo18Decimals(8999)) 
+    
     const expectedLiquidity = expandTo18Decimals(1000)
     await pair.transfer(pair.address, expectedLiquidity.sub(MINIMUM_LIQUIDITY))
     await pair.burn(wallet.address, overrides)
