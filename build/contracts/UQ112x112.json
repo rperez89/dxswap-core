@@ -10,14 +10,14 @@
     "absolutePath": "contracts/libraries/UQ112x112.sol",
     "exportedSymbols": {
       "UQ112x112": [
-        2664
+        2659
       ]
     },
-    "id": 2665,
+    "id": 2660,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 2624,
+        "id": 2619,
         "literals": [
           "solidity",
           "=",
@@ -33,19 +33,19 @@
         "contractKind": "library",
         "documentation": null,
         "fullyImplemented": true,
-        "id": 2664,
+        "id": 2659,
         "linearizedBaseContracts": [
-          2664
+          2659
         ],
         "name": "UQ112x112",
         "nodeType": "ContractDefinition",
         "nodes": [
           {
             "constant": true,
-            "id": 2629,
+            "id": 2624,
             "name": "Q112",
             "nodeType": "VariableDeclaration",
-            "scope": 2664,
+            "scope": 2659,
             "src": "207:30:11",
             "stateVariable": true,
             "storageLocation": "default",
@@ -54,7 +54,7 @@
               "typeString": "uint224"
             },
             "typeName": {
-              "id": 2625,
+              "id": 2620,
               "name": "uint224",
               "nodeType": "ElementaryTypeName",
               "src": "207:7:11",
@@ -69,7 +69,7 @@
                 "typeIdentifier": "t_rational_5192296858534827628530496329220096_by_1",
                 "typeString": "int_const 5192...(26 digits omitted)...0096"
               },
-              "id": 2628,
+              "id": 2623,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -77,7 +77,7 @@
               "leftExpression": {
                 "argumentTypes": null,
                 "hexValue": "32",
-                "id": 2626,
+                "id": 2621,
                 "isConstant": false,
                 "isLValue": false,
                 "isPure": true,
@@ -97,7 +97,7 @@
               "rightExpression": {
                 "argumentTypes": null,
                 "hexValue": "313132",
-                "id": 2627,
+                "id": 2622,
                 "isConstant": false,
                 "isLValue": false,
                 "isPure": true,
@@ -122,25 +122,25 @@
           },
           {
             "body": {
-              "id": 2644,
+              "id": 2639,
               "nodeType": "Block",
               "src": "344:57:11",
               "statements": [
                 {
                   "expression": {
                     "argumentTypes": null,
-                    "id": 2642,
+                    "id": 2637,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
                     "lValueRequested": false,
                     "leftHandSide": {
                       "argumentTypes": null,
-                      "id": 2636,
+                      "id": 2631,
                       "name": "z",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 2634,
+                      "referencedDeclaration": 2629,
                       "src": "354:1:11",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint224",
@@ -155,7 +155,7 @@
                         "typeIdentifier": "t_uint224",
                         "typeString": "uint224"
                       },
-                      "id": 2641,
+                      "id": 2636,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
@@ -165,11 +165,11 @@
                         "arguments": [
                           {
                             "argumentTypes": null,
-                            "id": 2638,
+                            "id": 2633,
                             "name": "y",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 2631,
+                            "referencedDeclaration": 2626,
                             "src": "366:1:11",
                             "typeDescriptions": {
                               "typeIdentifier": "t_uint112",
@@ -184,7 +184,7 @@
                               "typeString": "uint112"
                             }
                           ],
-                          "id": 2637,
+                          "id": 2632,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": true,
@@ -197,7 +197,7 @@
                           },
                           "typeName": "uint224"
                         },
-                        "id": 2639,
+                        "id": 2634,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
@@ -215,11 +215,11 @@
                       "operator": "*",
                       "rightExpression": {
                         "argumentTypes": null,
-                        "id": 2640,
+                        "id": 2635,
                         "name": "Q112",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 2629,
+                        "referencedDeclaration": 2624,
                         "src": "371:4:11",
                         "typeDescriptions": {
                           "typeIdentifier": "t_uint224",
@@ -238,29 +238,29 @@
                       "typeString": "uint224"
                     }
                   },
-                  "id": 2643,
+                  "id": 2638,
                   "nodeType": "ExpressionStatement",
                   "src": "354:21:11"
                 }
               ]
             },
             "documentation": null,
-            "id": 2645,
+            "id": 2640,
             "implemented": true,
             "kind": "function",
             "modifiers": [],
             "name": "encode",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 2632,
+              "id": 2627,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 2631,
+                  "id": 2626,
                   "name": "y",
                   "nodeType": "VariableDeclaration",
-                  "scope": 2645,
+                  "scope": 2640,
                   "src": "299:9:11",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -269,7 +269,7 @@
                     "typeString": "uint112"
                   },
                   "typeName": {
-                    "id": 2630,
+                    "id": 2625,
                     "name": "uint112",
                     "nodeType": "ElementaryTypeName",
                     "src": "299:7:11",
@@ -285,15 +285,15 @@
               "src": "298:11:11"
             },
             "returnParameters": {
-              "id": 2635,
+              "id": 2630,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 2634,
+                  "id": 2629,
                   "name": "z",
                   "nodeType": "VariableDeclaration",
-                  "scope": 2645,
+                  "scope": 2640,
                   "src": "333:9:11",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -302,7 +302,7 @@
                     "typeString": "uint224"
                   },
                   "typeName": {
-                    "id": 2633,
+                    "id": 2628,
                     "name": "uint224",
                     "nodeType": "ElementaryTypeName",
                     "src": "333:7:11",
@@ -317,7 +317,7 @@
               ],
               "src": "332:11:11"
             },
-            "scope": 2664,
+            "scope": 2659,
             "src": "283:118:11",
             "stateMutability": "pure",
             "superFunction": null,
@@ -325,25 +325,25 @@
           },
           {
             "body": {
-              "id": 2662,
+              "id": 2657,
               "nodeType": "Block",
               "src": "540:35:11",
               "statements": [
                 {
                   "expression": {
                     "argumentTypes": null,
-                    "id": 2660,
+                    "id": 2655,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
                     "lValueRequested": false,
                     "leftHandSide": {
                       "argumentTypes": null,
-                      "id": 2654,
+                      "id": 2649,
                       "name": "z",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 2652,
+                      "referencedDeclaration": 2647,
                       "src": "550:1:11",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint224",
@@ -358,18 +358,18 @@
                         "typeIdentifier": "t_uint224",
                         "typeString": "uint224"
                       },
-                      "id": 2659,
+                      "id": 2654,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
                       "lValueRequested": false,
                       "leftExpression": {
                         "argumentTypes": null,
-                        "id": 2655,
+                        "id": 2650,
                         "name": "x",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 2647,
+                        "referencedDeclaration": 2642,
                         "src": "554:1:11",
                         "typeDescriptions": {
                           "typeIdentifier": "t_uint224",
@@ -383,11 +383,11 @@
                         "arguments": [
                           {
                             "argumentTypes": null,
-                            "id": 2657,
+                            "id": 2652,
                             "name": "y",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
-                            "referencedDeclaration": 2649,
+                            "referencedDeclaration": 2644,
                             "src": "566:1:11",
                             "typeDescriptions": {
                               "typeIdentifier": "t_uint112",
@@ -402,7 +402,7 @@
                               "typeString": "uint112"
                             }
                           ],
-                          "id": 2656,
+                          "id": 2651,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": true,
@@ -415,7 +415,7 @@
                           },
                           "typeName": "uint224"
                         },
-                        "id": 2658,
+                        "id": 2653,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
@@ -441,29 +441,29 @@
                       "typeString": "uint224"
                     }
                   },
-                  "id": 2661,
+                  "id": 2656,
                   "nodeType": "ExpressionStatement",
                   "src": "550:18:11"
                 }
               ]
             },
             "documentation": null,
-            "id": 2663,
+            "id": 2658,
             "implemented": true,
             "kind": "function",
             "modifiers": [],
             "name": "uqdiv",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 2650,
+              "id": 2645,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 2647,
+                  "id": 2642,
                   "name": "x",
                   "nodeType": "VariableDeclaration",
-                  "scope": 2663,
+                  "scope": 2658,
                   "src": "484:9:11",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -472,7 +472,7 @@
                     "typeString": "uint224"
                   },
                   "typeName": {
-                    "id": 2646,
+                    "id": 2641,
                     "name": "uint224",
                     "nodeType": "ElementaryTypeName",
                     "src": "484:7:11",
@@ -486,10 +486,10 @@
                 },
                 {
                   "constant": false,
-                  "id": 2649,
+                  "id": 2644,
                   "name": "y",
                   "nodeType": "VariableDeclaration",
-                  "scope": 2663,
+                  "scope": 2658,
                   "src": "495:9:11",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -498,7 +498,7 @@
                     "typeString": "uint112"
                   },
                   "typeName": {
-                    "id": 2648,
+                    "id": 2643,
                     "name": "uint112",
                     "nodeType": "ElementaryTypeName",
                     "src": "495:7:11",
@@ -514,15 +514,15 @@
               "src": "483:22:11"
             },
             "returnParameters": {
-              "id": 2653,
+              "id": 2648,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 2652,
+                  "id": 2647,
                   "name": "z",
                   "nodeType": "VariableDeclaration",
-                  "scope": 2663,
+                  "scope": 2658,
                   "src": "529:9:11",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -531,7 +531,7 @@
                     "typeString": "uint224"
                   },
                   "typeName": {
-                    "id": 2651,
+                    "id": 2646,
                     "name": "uint224",
                     "nodeType": "ElementaryTypeName",
                     "src": "529:7:11",
@@ -546,14 +546,14 @@
               ],
               "src": "528:11:11"
             },
-            "scope": 2664,
+            "scope": 2659,
             "src": "469:106:11",
             "stateMutability": "pure",
             "superFunction": null,
             "visibility": "internal"
           }
         ],
-        "scope": 2665,
+        "scope": 2660,
         "src": "183:394:11"
       }
     ],
