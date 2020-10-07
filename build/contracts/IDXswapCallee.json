@@ -41,14 +41,14 @@
     "absolutePath": "contracts/interfaces/IDXswapCallee.sol",
     "exportedSymbols": {
       "IDXswapCallee": [
-        1932
+        1927
       ]
     },
-    "id": 1933,
+    "id": 1928,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 1920,
+        "id": 1915,
         "literals": [
           "solidity",
           ">=",
@@ -64,9 +64,9 @@
         "contractKind": "interface",
         "documentation": null,
         "fullyImplemented": false,
-        "id": 1932,
+        "id": 1927,
         "linearizedBaseContracts": [
-          1932
+          1927
         ],
         "name": "IDXswapCallee",
         "nodeType": "ContractDefinition",
@@ -74,22 +74,22 @@
           {
             "body": null,
             "documentation": null,
-            "id": 1931,
+            "id": 1926,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "DXswapCall",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 1929,
+              "id": 1924,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 1922,
+                  "id": 1917,
                   "name": "sender",
                   "nodeType": "VariableDeclaration",
-                  "scope": 1931,
+                  "scope": 1926,
                   "src": "76:14:4",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -98,7 +98,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 1921,
+                    "id": 1916,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "76:7:4",
@@ -113,10 +113,10 @@
                 },
                 {
                   "constant": false,
-                  "id": 1924,
+                  "id": 1919,
                   "name": "amount0",
                   "nodeType": "VariableDeclaration",
-                  "scope": 1931,
+                  "scope": 1926,
                   "src": "92:12:4",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -125,7 +125,7 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 1923,
+                    "id": 1918,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
                     "src": "92:4:4",
@@ -139,10 +139,10 @@
                 },
                 {
                   "constant": false,
-                  "id": 1926,
+                  "id": 1921,
                   "name": "amount1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 1931,
+                  "scope": 1926,
                   "src": "106:12:4",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -151,7 +151,7 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 1925,
+                    "id": 1920,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
                     "src": "106:4:4",
@@ -165,10 +165,10 @@
                 },
                 {
                   "constant": false,
-                  "id": 1928,
+                  "id": 1923,
                   "name": "data",
                   "nodeType": "VariableDeclaration",
-                  "scope": 1931,
+                  "scope": 1926,
                   "src": "120:19:4",
                   "stateVariable": false,
                   "storageLocation": "calldata",
@@ -177,7 +177,7 @@
                     "typeString": "bytes"
                   },
                   "typeName": {
-                    "id": 1927,
+                    "id": 1922,
                     "name": "bytes",
                     "nodeType": "ElementaryTypeName",
                     "src": "120:5:4",
@@ -193,19 +193,19 @@
               "src": "75:65:4"
             },
             "returnParameters": {
-              "id": 1930,
+              "id": 1925,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "149:0:4"
             },
-            "scope": 1932,
+            "scope": 1927,
             "src": "56:94:4",
             "stateMutability": "nonpayable",
             "superFunction": null,
             "visibility": "external"
           }
         ],
-        "scope": 1933,
+        "scope": 1928,
         "src": "26:126:4"
       }
     ],
