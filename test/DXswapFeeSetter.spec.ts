@@ -37,14 +37,11 @@ describe('DXswapFeeSetter', () => {
     token0 = fixture.token0
     token1 = fixture.token1
     pair = fixture.pair
-    feeSetter = await deployContract(
-      dxdao, DXswapFeeSetter, [dxdao.address, factory.address], { gasLimit: 9999999 }
-    );
-    await factory.setFeeToSetter(feeSetter.address)
+    feeSetter = fixture.feeSetter
   })
 
   it('feeToSetter', async () => {
-    expect(await factory.feeTo()).to.eq(AddressZero)
+    expect(await factory.feeTo()).to.eq(dxdao.address)
     expect(await factory.feeToSetter()).to.eq(feeSetter.address)
     expect(await feeSetter.owner()).to.eq(dxdao.address)
   })
