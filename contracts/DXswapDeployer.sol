@@ -3,11 +3,13 @@ pragma solidity =0.5.16;
 import './DXswapFactory.sol';
 import './interfaces/IDXswapPair.sol';
 import './DXswapFeeSetter.sol';
+import './DXswapFeeReceiver.sol';
 
 
 contract DXswapDeployer {
     
     address payable public dxdaoAvatar;
+    address public WETH;
     uint8 public state = 0;
 
     struct TokenPair {
@@ -17,7 +19,8 @@ contract DXswapDeployer {
     }
     
     TokenPair[] public initialTokenPairs;
-    
+
+    event FeeReceiverDeployed(address feeReceiver);    
     event FeeSetterDeployed(address feeSetter);
     event PairFactoryDeployed(address factory);
     event PairDeployed(address pair);
@@ -25,11 +28,13 @@ contract DXswapDeployer {
     // Step 1: Create the deployer contract with all the needed information for deployment.
     constructor(
         address payable _dxdaoAvatar,
+        address _WETH,
         address[] memory tokensA,
         address[] memory tokensB,
         uint32[] memory swapFees
     ) public {
         dxdaoAvatar = _dxdaoAvatar;
+        WETH = _WETH;
         for(uint8 i = 0; i < tokensA.length; i ++) {
             initialTokenPairs.push(
                 TokenPair(
@@ -60,7 +65,10 @@ contract DXswapDeployer {
                 address(newPair)
             );
         }
-        dxSwapFactory.setFeeTo(dxdaoAvatar);
+        DXswapFeeReceiver dxSwapFeeReceiver = new DXswapFeeReceiver(dxdaoAvatar, address(dxSwapFactory), WETH);
+        emit FeeReceiverDeployed(address(dxSwapFeeReceiver));
+        dxSwapFactory.setFeeTo(address(dxSwapFeeReceiver));
+        
         DXswapFeeSetter dxSwapFeeSetter = new DXswapFeeSetter(dxdaoAvatar, address(dxSwapFactory));
         emit FeeSetterDeployed(address(dxSwapFeeSetter));
         dxSwapFactory.setFeeToSetter(address(dxSwapFeeSetter));
