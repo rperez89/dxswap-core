@@ -7,6 +7,7 @@ import { getCreate2Address, expandTo18Decimals } from './shared/utilities'
 import { factoryFixture } from './shared/fixtures'
 
 import ERC20 from '../build/ERC20.json'
+import WETH9 from '../build/WETH9.json'
 import DXswapDeployer from '../build/DXswapDeployer.json'
 import DXswapFactory from '../build/DXswapFactory.json'
 import DXswapPair from '../build/DXswapPair.json'
@@ -17,11 +18,11 @@ describe('DXswapDeployer', () => {
   const provider = new MockProvider({
     hardfork: 'istanbul',
     mnemonic: 'horn horn horn horn horn horn horn horn horn horn horn horn',
-    gasLimit: 9999999
+    gasLimit: 12000000
   })
   const [dxdao, tokenOwner, other] = provider.getWallets()
   const overrides = {
-    gasLimit: 9999999
+    gasLimit: 12000000
   }
 
   let dxSwapDeployer: Contract
@@ -36,11 +37,12 @@ describe('DXswapDeployer', () => {
     token0 = await deployContract(tokenOwner, ERC20, [expandTo18Decimals(20000)], overrides)
     token1 = await deployContract(tokenOwner, ERC20, [expandTo18Decimals(20000)], overrides)
     token2 = await deployContract(tokenOwner, ERC20, [expandTo18Decimals(20000)], overrides)
-      
+    const weth = await deployContract(tokenOwner, WETH9)
     // Deploy DXswapDeployer
     dxSwapDeployer = await deployContract(
       dxdao, DXswapDeployer, [
         dxdao.address,
+        weth.address,
         [token0.address, token0.address, token1.address],
         [token1.address, token2.address, token2.address],
         [10, 20, 30],
@@ -93,8 +95,11 @@ describe('DXswapDeployer', () => {
     const pair12Address = deployTxReceipt.logs != undefined 
       ? defaultAbiCoder.decode(['address'], deployTxReceipt.logs[6].data)[0]
       : null
-    const feeSetterAddress = deployTxReceipt.logs != undefined 
+    const feeReceiverAddress = deployTxReceipt.logs != undefined 
       ? defaultAbiCoder.decode(['address'], deployTxReceipt.logs[7].data)[0]
+      : null
+    const feeSetterAddress = deployTxReceipt.logs != undefined 
+      ? defaultAbiCoder.decode(['address'], deployTxReceipt.logs[8].data)[0]
       : null
     
     // Instantiate contracts
@@ -116,7 +121,7 @@ describe('DXswapDeployer', () => {
     );
     
     // Conpare onchain information to offchain predicted information
-    expect(await pairFactory.feeTo()).to.eq(dxdao.address)
+    expect(await pairFactory.feeTo()).to.eq(feeReceiverAddress)
     expect(await pairFactory.feeToSetter()).to.eq(feeSetterAddress)
     expect(await pairFactory.protocolFeeDenominator()).to.eq(9)
     expect(await pairFactory.allPairsLength()).to.eq(3)
