@@ -13,11 +13,17 @@ contract DXswapFeeReceiver {
     address public owner;
     IDXswapFactory public factory;
     address public WETH;
+    address public ethReceiver;
+    address public fallbackReceiver;
 
-    constructor(address _owner, address _factory, address _WETH) public {
+    constructor(
+        address _owner, address _factory, address _WETH, address _ethReceiver, address _fallbackReceiver
+    ) public {
         owner = _owner;
         factory = IDXswapFactory(_factory);
         WETH = _WETH;
+        ethReceiver = _ethReceiver;
+        fallbackReceiver = _fallbackReceiver;
     }
     
     function() external payable {}
@@ -25,6 +31,12 @@ contract DXswapFeeReceiver {
     function transferOwnership(address newOwner) external {
         require(msg.sender == owner, 'DXswapFeeReceiver: FORBIDDEN');
         owner = newOwner;
+    }
+    
+    function changeReceivers(address _ethReceiver, address _fallbackReceiver) external {
+        require(msg.sender == owner, 'DXswapFeeReceiver: FORBIDDEN');
+        ethReceiver = _ethReceiver;
+        fallbackReceiver = _fallbackReceiver;
     }
     
     // Returns sorted token addresses, used to handle return values from pairs sorted in this order
@@ -79,21 +91,21 @@ contract DXswapFeeReceiver {
         );
         
         IWETH(WETH).withdraw(amountOut);
-        TransferHelper.safeTransferETH(owner, amountOut);
+        TransferHelper.safeTransferETH(ethReceiver, amountOut);
     }
 
     // Transfer to the owner address the token converted into ETH if possible, if not just transfer the token.
     function _takeETHorToken(address token, uint amount) internal {
       if (token == WETH) {
-        // If it is WETH, transfer directly to owner
+        // If it is WETH, transfer directly to ETH receiver
         IWETH(WETH).withdraw(amount);
-        TransferHelper.safeTransferETH(owner, amount);
+        TransferHelper.safeTransferETH(ethReceiver, amount);
       } else if (isContract(pairFor(token, WETH))) {
-        // If it is not WETH and there is a direct path to WETH, swap and trasnfer WETH to owner
+        // If it is not WETH and there is a direct path to WETH, swap and trasnfer WETH to ETH receiver
         _swapTokensForETH(amount, token);
       } else {
-        // If it is not WETH and there is not a direct path to WETH, transfer tokens directly to owner
-        TransferHelper.safeTransfer(token, owner, amount);
+        // If it is not WETH and there is not a direct path to WETH, transfer tokens directly to fallback receiver
+        TransferHelper.safeTransfer(token, fallbackReceiver, amount);
       }
     }
     

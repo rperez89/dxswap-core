@@ -24,10 +24,10 @@ const overrides = {
   gasLimit: 9999999
 }
 
-export async function factoryFixture(provider: Web3Provider, [dxdao]: Wallet[]): Promise<FactoryFixture> {
+export async function factoryFixture(provider: Web3Provider, [dxdao, ethReceiver]: Wallet[]): Promise<FactoryFixture> {
   const WETH = await deployContract(dxdao, WETH9)
   const dxSwapDeployer = await deployContract(
-    dxdao, DXswapDeployer, [ dxdao.address, WETH.address, [], [], [], ], overrides
+    dxdao, DXswapDeployer, [ ethReceiver.address, dxdao.address, WETH.address, [], [], [], ], overrides
   )
   await dxdao.sendTransaction({to: dxSwapDeployer.address, gasPrice: 0, value: 1})
   const deployTx = await dxSwapDeployer.deploy()
@@ -50,7 +50,7 @@ interface PairFixture extends FactoryFixture {
   wethPair: Contract
 }
 
-export async function pairFixture(provider: Web3Provider, [dxdao, wallet]: Wallet[]): Promise<PairFixture> {
+export async function pairFixture(provider: Web3Provider, [dxdao, wallet, ethReceiver]: Wallet[]): Promise<PairFixture> {
   const tokenA = await deployContract(wallet, ERC20, [expandTo18Decimals(10000)], overrides)
   const tokenB = await deployContract(wallet, ERC20, [expandTo18Decimals(10000)], overrides)
   const WETH = await deployContract(wallet, WETH9)
@@ -60,6 +60,7 @@ export async function pairFixture(provider: Web3Provider, [dxdao, wallet]: Walle
   
   const dxSwapDeployer = await deployContract(
     dxdao, DXswapDeployer, [
+      ethReceiver.address,
       dxdao.address,
       WETH.address,
       [token0.address, token1.address],

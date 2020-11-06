@@ -23,8 +23,8 @@ describe('DXswapFeeSetter', () => {
     mnemonic: 'horn horn horn horn horn horn horn horn horn horn horn horn',
     gasLimit: 9999999
   })
-  const [dxdao, pairOwner, other] = provider.getWallets()
-  const loadFixture = createFixtureLoader(provider, [dxdao, other])
+  const [dxdao, pairOwner, protocolFeeReceiver, other] = provider.getWallets()
+  const loadFixture = createFixtureLoader(provider, [dxdao, other, protocolFeeReceiver])
 
   let factory: Contract
   let token0: Contract

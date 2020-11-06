@@ -20,7 +20,7 @@ describe('DXswapDeployer', () => {
     mnemonic: 'horn horn horn horn horn horn horn horn horn horn horn horn',
     gasLimit: 12000000
   })
-  const [dxdao, tokenOwner, other] = provider.getWallets()
+  const [dxdao, tokenOwner, protocolFeeReceiver, other] = provider.getWallets()
   const overrides = {
     gasLimit: 12000000
   }
@@ -41,6 +41,7 @@ describe('DXswapDeployer', () => {
     // Deploy DXswapDeployer
     dxSwapDeployer = await deployContract(
       dxdao, DXswapDeployer, [
+        protocolFeeReceiver.address,
         dxdao.address,
         weth.address,
         [token0.address, token0.address, token1.address],
