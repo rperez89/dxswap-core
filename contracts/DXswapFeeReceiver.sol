@@ -11,7 +11,6 @@ contract DXswapFeeReceiver {
     using SafeMath for uint;
 
     address public owner;
-    mapping(address => address) public pairOwners;
     IDXswapFactory public factory;
     address public WETH;
 
@@ -28,14 +27,21 @@ contract DXswapFeeReceiver {
         owner = newOwner;
     }
     
-    // returns sorted token addresses, used to handle return values from pairs sorted in this order
+    // Returns sorted token addresses, used to handle return values from pairs sorted in this order
     function sortTokens(address tokenA, address tokenB) internal pure returns (address token0, address token1) {
         require(tokenA != tokenB, 'DXswapFeeReceiver: IDENTICAL_ADDRESSES');
         (token0, token1) = tokenA < tokenB ? (tokenA, tokenB) : (tokenB, tokenA);
         require(token0 != address(0), 'DXswapFeeReceiver: ZERO_ADDRESS');
     }
+    
+    // Helper function to know if an address is a contract
+    function isContract(address addr) internal returns (bool) {
+        uint size;
+        assembly { size := extcodesize(addr) }
+        return size > 0;
+    }
 
-    // calculates the CREATE2 address for a pair without making any external calls
+    // Calculates the CREATE2 address for a pair without making any external calls
     // Taken from DXswapRouter, removed the factory parameter
     function pairFor(address tokenA, address tokenB) internal view returns (address pair) {
         (address token0, address token1) = sortTokens(tokenA, tokenB);
@@ -47,34 +53,21 @@ contract DXswapFeeReceiver {
             ))));
     }
     
-    // fetches and sorts the reserves for a pair
-    function getReserves(address tokenA, address tokenB) internal view returns (uint reserveA, uint reserveB) {
-        (address token0,) = sortTokens(tokenA, tokenB);
-        (uint reserve0, uint reserve1,) = IDXswapPair(pairFor(tokenA, tokenB)).getReserves();
-        (reserveA, reserveB) = tokenA == token0 ? (reserve0, reserve1) : (reserve1, reserve0);
-    }
-    
-    // given an input amount of an asset and pair reserves, returns the maximum output amount of the other asset
-    // Taken from DXswapRouter, removed the factory parameter
-    function getAmountOut(uint amountIn, uint reserveIn, uint reserveOut, uint swapFee) internal pure returns (uint amountOut) {
-        require(amountIn > 0, 'DXswapFeeReceiver: INSUFFICIENT_INPUT_AMOUNT');
-        require(reserveIn > 0 && reserveOut > 0, 'DXswapFeeReceiver: INSUFFICIENT_LIQUIDITY');
-        uint amountInWithFee = amountIn.mul(uint(10000).sub(swapFee));
-        uint numerator = amountInWithFee.mul(reserveOut);
-        uint denominator = reserveIn.mul(10000).add(amountInWithFee);
-        amountOut = numerator / denominator;
-    }
-    
-    
     // Taken from DXswapRouter, removed the deadline argument
     function _swapTokensForETH(uint amountIn, address fromToken)
         internal
     {
         IDXswapPair pairToUse = IDXswapPair(pairFor(fromToken, WETH));
         
-        (uint reserveIn, uint reserveOut) = getReserves(fromToken, WETH);
-        uint amountOut = getAmountOut(amountIn, reserveIn, reserveOut, pairToUse.swapFee());
-      
+        (uint reserve0, uint reserve1,) = pairToUse.getReserves();
+        (uint reserveIn, uint reserveOut) = fromToken < WETH ? (reserve0, reserve1) : (reserve1, reserve0);
+
+        require(reserveIn > 0 && reserveOut > 0, 'DXswapFeeReceiver: INSUFFICIENT_LIQUIDITY');
+        uint amountInWithFee = amountIn.mul(uint(10000).sub(pairToUse.swapFee()));
+        uint numerator = amountInWithFee.mul(reserveOut);
+        uint denominator = reserveIn.mul(10000).add(amountInWithFee);
+        uint amountOut = numerator / denominator;
+        
         TransferHelper.safeTransfer(
             fromToken, address(pairToUse), amountIn
         );
@@ -87,12 +80,6 @@ contract DXswapFeeReceiver {
         
         IWETH(WETH).withdraw(amountOut);
         TransferHelper.safeTransferETH(owner, amountOut);
-    }
-    
-    function isContract(address addr) internal returns (bool) {
-        uint size;
-        assembly { size := extcodesize(addr) }
-        return size > 0;
     }
 
     // Transfer to the owner address the token converted into ETH if possible, if not just transfer the token.
@@ -111,16 +98,18 @@ contract DXswapFeeReceiver {
     }
     
     // Take what was charged as protocol fee from the DXswap pair liquidity
-    function takeProtocolFee(IDXswapPair pair) external {
-        require(msg.sender == owner, 'DXswapFeeReceiver: FORBIDDEN');
-        address token0 = pair.token0();
-        address token1 = pair.token1();
-        pair.transfer(address(pair), pair.balanceOf(address(this)));
-        (uint amount0, uint amount1) = pair.burn(address(this));
-        if (amount0 > 0)
-            _takeETHorToken(token0, amount0);
-        if (amount1 > 0)
-            _takeETHorToken(token1, amount1);
+    function takeProtocolFee(IDXswapPair[] calldata pairs) external {
+        for (uint i = 0; i < pairs.length; i++) {
+            require(msg.sender == owner, 'DXswapFeeReceiver: FORBIDDEN');
+            address token0 = pairs[i].token0();
+            address token1 = pairs[i].token1();
+            pairs[i].transfer(address(pairs[i]), pairs[i].balanceOf(address(this)));
+            (uint amount0, uint amount1) = pairs[i].burn(address(this));
+            if (amount0 > 0)
+                _takeETHorToken(token0, amount0);
+            if (amount1 > 0)
+                _takeETHorToken(token1, amount1);
+        }
     }
 
 }

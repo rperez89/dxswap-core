@@ -83,7 +83,7 @@ describe('DXswapFeeReceiver', () => {
     await token1.transfer(pair.address, expandTo18Decimals(10))
     await pair.mint(wallet.address, overrides)
   
-    await feeReceiver.connect(dxdao).takeProtocolFee(pair.address, overrides)
+    await feeReceiver.connect(dxdao).takeProtocolFee([pair.address], overrides)
 
   })
 
@@ -120,7 +120,7 @@ describe('DXswapFeeReceiver', () => {
     await WETH.transfer(wethPair.address, expandTo18Decimals(10))
     await wethPair.mint(wallet.address, overrides)
     
-    await feeReceiver.takeProtocolFee(wethPair.address, overrides)
+    await feeReceiver.takeProtocolFee([wethPair.address], overrides)
     
   })
   
@@ -169,7 +169,7 @@ describe('DXswapFeeReceiver', () => {
     await tokenB.transfer(newTokenPair.address, expandTo18Decimals(10))
     await newTokenPair.mint(wallet.address, overrides)
 
-    await feeReceiver.connect(dxdao).takeProtocolFee(newTokenPair.address, overrides)
+    await feeReceiver.connect(dxdao).takeProtocolFee([newTokenPair.address], overrides)
 
   })
   
