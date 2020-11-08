@@ -134,7 +134,7 @@ describe('DXswapFeeReceiver', () => {
     
     const protocolFeeReceiverBalance = await provider.getBalance(protocolFeeReceiver.address)
 
-    await feeReceiver.takeProtocolFee([wethPair.address], overrides)
+    await feeReceiver.connect(wallet).takeProtocolFee([wethPair.address], overrides)
 
     expect(await provider.getBalance(protocolFeeReceiver.address)).to.be.above(protocolFeeReceiverBalance.toString())
     expect(await token1.balanceOf(protocolFeeReceiver.address)).to.eq(0)
@@ -142,7 +142,7 @@ describe('DXswapFeeReceiver', () => {
   })
   
   it(
-    'should receive only tokens when extracting fee from token pair that has no path to WETH',
+    'should receive only tokens when extracting fee from tokenA-tokenB pair that has no path to WETH',
     async () => 
   {
     const tokenA = await deployContract(wallet, ERC20, [expandTo18Decimals(10000)], overrides)
@@ -175,6 +175,9 @@ describe('DXswapFeeReceiver', () => {
       wallet.address, '0x', overrides
     )
 
+    // NOTE I think this swap is asking for less than it could get
+    // here cus it doesn't take into account the change from the previous swap
+    // For the purpose of these tests I think this is fine -JPK 11/08/20
     await tokenB.transfer(newTokenPair.address, swapAmount)
     await newTokenPair.swap(
       (tokenA.address < tokenB.address) ? amountOut : 0,
@@ -186,8 +189,15 @@ describe('DXswapFeeReceiver', () => {
     await tokenB.transfer(newTokenPair.address, expandTo18Decimals(10))
     await newTokenPair.mint(wallet.address, overrides)
 
-    await feeReceiver.connect(dxdao).takeProtocolFee([newTokenPair.address], overrides)
+    const protocolFeeReceiverBalance = await provider.getBalance(protocolFeeReceiver.address)
 
+    await feeReceiver.connect(wallet).takeProtocolFee([newTokenPair.address], overrides)
+
+    expect(await provider.getBalance(protocolFeeReceiver.address)).to.eq(protocolFeeReceiverBalance.toString())
+    expect(await tokenA.balanceOf(protocolFeeReceiver.address)).to.eq(0)
+    expect(await tokenB.balanceOf(protocolFeeReceiver.address)).to.eq(0)
+    expect(await tokenA.balanceOf(dxdao.address)).to.be.above(0)
+    expect(await tokenB.balanceOf(dxdao.address)).to.be.above(0)
   })
   
 })
