@@ -303,5 +303,52 @@ describe('DXswapFeeReceiver', () => {
     expect(await tokenD.balanceOf(dxdao.address)).to.be.above(0)
   })
 
+  it(
+    'should only allow owner to transfer ownership',
+    async () =>
+  {
+    await expect(feeReceiver.connect(other).transferOwnership(other.address)).to.be.revertedWith('DXswapFeeReceiver: FORBIDDEN')
+  })
 
+  it(
+    'should only allow owner to change receivers',
+    async () =>
+  {
+    await expect(feeReceiver.connect(other).changeReceivers(other.address, other.address)).to.be.revertedWith('DXswapFeeReceiver: FORBIDDEN')
+  })
+
+  it(
+    'should revert with insufficient liquidity error if there is not any liquidity in the WETH pair',
+    async () => 
+  {
+    const tokenAmount = expandTo18Decimals(100);
+    const wethAmount = expandTo18Decimals(100);
+    const swapAmount = expandTo18Decimals(50);
+
+    await token0.transfer(pair.address, tokenAmount)
+    await token1.transfer(pair.address, tokenAmount)
+    await pair.mint(wallet.address, overrides)
+        
+    const amountInWithFee = swapAmount.mul(FEE_DENOMINATOR.sub(15))
+    const numerator = amountInWithFee.mul(tokenAmount)
+    const denominator = tokenAmount.mul(FEE_DENOMINATOR).add(amountInWithFee)
+    const amountOut = numerator.div(denominator)
+  
+    await token0.transfer(pair.address, swapAmount)
+    await pair.swap(0, amountOut, wallet.address, '0x', overrides)
+
+    // NOTE I think this swap is asking for less than it could get
+    // here cus it doesn't take into account the change from the previous swap
+    // For the purpose of these tests I think this is fine -JPK 11/08/20
+    await token1.transfer(pair.address, swapAmount)
+    await pair.swap(amountOut, 0, wallet.address, '0x', overrides)
+        
+    await token0.transfer(pair.address, expandTo18Decimals(10))
+    await token1.transfer(pair.address, expandTo18Decimals(10))
+    await pair.mint(wallet.address, overrides)
+  
+    const protocolFeeReceiverBalance = await provider.getBalance(protocolFeeReceiver.address)
+
+    await expect(feeReceiver.connect(wallet).takeProtocolFee([pair.address], overrides)).to.be.revertedWith('DXswapFeeReceiver: INSUFFICIENT_LIQUIDITY')
+  })
 })
