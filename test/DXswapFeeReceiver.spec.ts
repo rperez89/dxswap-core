@@ -96,7 +96,7 @@ describe('DXswapFeeReceiver', () => {
     expect(await token0.balanceOf(dxdao.address)).to.be.above(0)
   })
 
-  it('should receive everything in ETH from one WETH-token pair', async () => {
+  it('should receive everything in ETH from one WETH-token1 pair', async () => {
     
     const tokenAmount = expandTo18Decimals(100);
     const wethAmount = expandTo18Decimals(100);
@@ -117,7 +117,10 @@ describe('DXswapFeeReceiver', () => {
       (token1.address < WETH.address) ? amountOut : 0,
       wallet.address, '0x', overrides
     )
-    
+
+    // NOTE I think this swap is asking for less than it could get
+    // here cus it doesn't take into account the change from the previous swap
+    // For the purpose of these tests I think this is fine -JPK 11/08/20
     await WETH.transfer(wethPair.address, swapAmount)
     await wethPair.swap(
       (token1.address < WETH.address) ? amountOut : 0,
@@ -129,8 +132,13 @@ describe('DXswapFeeReceiver', () => {
     await WETH.transfer(wethPair.address, expandTo18Decimals(10))
     await wethPair.mint(wallet.address, overrides)
     
+    const protocolFeeReceiverBalance = await provider.getBalance(protocolFeeReceiver.address)
+
     await feeReceiver.takeProtocolFee([wethPair.address], overrides)
-    
+
+    expect(await provider.getBalance(protocolFeeReceiver.address)).to.be.above(protocolFeeReceiverBalance.toString())
+    expect(await token1.balanceOf(protocolFeeReceiver.address)).to.eq(0)
+    expect(await token1.balanceOf(dxdao.address)).to.eq(0)
   })
   
   it(
