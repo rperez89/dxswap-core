@@ -200,4 +200,108 @@ describe('DXswapFeeReceiver', () => {
     expect(await tokenB.balanceOf(dxdao.address)).to.be.above(0)
   })
   
+  it(
+    'should receive only tokens when extracting fee from both tokenA-tonkenB pair and tokenC-tokenD pair',
+    async () =>
+  {
+    const tokenAmount = expandTo18Decimals(100);
+    const swapAmount = expandTo18Decimals(50);
+
+    const amountInWithFee = swapAmount.mul(FEE_DENOMINATOR.sub(15))
+    const numerator = amountInWithFee.mul(tokenAmount)
+    const denominator = tokenAmount.mul(FEE_DENOMINATOR).add(amountInWithFee)
+    const amountOut = numerator.div(denominator)
+
+    // Set up tokenA-tokenB
+    const tokenA = await deployContract(wallet, ERC20, [expandTo18Decimals(10000)], overrides)
+    const tokenB = await deployContract(wallet, ERC20, [expandTo18Decimals(10000)], overrides)
+    
+    await factory.createPair(tokenA.address, tokenB.address);
+    const newTokenPair = new Contract(
+      await factory.getPair(
+        (tokenA.address < tokenB.address) ? tokenA.address : tokenB.address,
+        (tokenA.address < tokenB.address) ? tokenB.address : tokenA.address
+      ), JSON.stringify(DXswapPair.abi), provider
+    ).connect(wallet)
+
+    await tokenA.transfer(newTokenPair.address, tokenAmount)
+    await tokenB.transfer(newTokenPair.address, tokenAmount)
+    await newTokenPair.mint(wallet.address, overrides)
+  
+    await tokenA.transfer(newTokenPair.address, swapAmount)
+    await newTokenPair.swap(
+      (tokenA.address < tokenB.address) ? 0 : amountOut,
+      (tokenA.address < tokenB.address) ? amountOut : 0,
+      wallet.address, '0x', overrides
+    )
+
+    // NOTE I think this swap is asking for less than it could get
+    // here cus it doesn't take into account the change from the previous swap
+    // For the purpose of these tests I think this is fine -JPK 11/08/20
+    await tokenB.transfer(newTokenPair.address, swapAmount)
+    await newTokenPair.swap(
+      (tokenA.address < tokenB.address) ? amountOut : 0,
+      (tokenA.address < tokenB.address) ? 0 : amountOut,
+      wallet.address, '0x', overrides
+    )
+    
+    await tokenA.transfer(newTokenPair.address, expandTo18Decimals(10))
+    await tokenB.transfer(newTokenPair.address, expandTo18Decimals(10))
+    await newTokenPair.mint(wallet.address, overrides)
+
+    // Set up tokenC-tokenD pair
+    const tokenC = await deployContract(wallet, ERC20, [expandTo18Decimals(10000)], overrides)
+    const tokenD = await deployContract(wallet, ERC20, [expandTo18Decimals(10000)], overrides)
+    
+    await factory.createPair(tokenC.address, tokenD.address);
+    const secondNewTokenPair = new Contract(
+      await factory.getPair(
+        (tokenC.address < tokenD.address) ? tokenC.address : tokenD.address,
+        (tokenC.address < tokenD.address) ? tokenD.address : tokenC.address
+      ), JSON.stringify(DXswapPair.abi), provider
+    ).connect(wallet)
+
+    await tokenC.transfer(secondNewTokenPair.address, tokenAmount)
+    await tokenD.transfer(secondNewTokenPair.address, tokenAmount)
+    await secondNewTokenPair.mint(wallet.address, overrides)
+
+    await tokenC.transfer(secondNewTokenPair.address, swapAmount)
+    await secondNewTokenPair.swap(
+      (tokenC.address < tokenD.address) ? 0 : amountOut,
+      (tokenC.address < tokenD.address) ? amountOut : 0,
+      wallet.address, '0x', overrides
+    )
+
+    // NOTE I think this swap is asking for less than it could get
+    // here cus it doesn't take into account the change from the previous swap
+    // For the purpose of these tests I think this is fine -JPK 11/08/20
+    await tokenD.transfer(secondNewTokenPair.address, swapAmount)
+    await secondNewTokenPair.swap(
+      (tokenC.address < tokenD.address) ? amountOut : 0,
+      (tokenC.address < tokenD.address) ? 0 : amountOut,
+      wallet.address, '0x', overrides
+    )
+    
+    await tokenC.transfer(secondNewTokenPair.address, expandTo18Decimals(10))
+    await tokenD.transfer(secondNewTokenPair.address, expandTo18Decimals(10))
+    await secondNewTokenPair.mint(wallet.address, overrides)
+
+    const protocolFeeReceiverBalance = await provider.getBalance(protocolFeeReceiver.address)
+
+    await feeReceiver.connect(wallet).takeProtocolFee([newTokenPair.address, secondNewTokenPair.address], overrides)
+
+    expect(await provider.getBalance(protocolFeeReceiver.address)).to.eq(protocolFeeReceiverBalance.toString())
+
+    expect(await tokenA.balanceOf(protocolFeeReceiver.address)).to.eq(0)
+    expect(await tokenB.balanceOf(protocolFeeReceiver.address)).to.eq(0)
+    expect(await tokenA.balanceOf(dxdao.address)).to.be.above(0)
+    expect(await tokenB.balanceOf(dxdao.address)).to.be.above(0)
+
+    expect(await tokenC.balanceOf(protocolFeeReceiver.address)).to.eq(0)
+    expect(await tokenD.balanceOf(protocolFeeReceiver.address)).to.eq(0)
+    expect(await tokenC.balanceOf(dxdao.address)).to.be.above(0)
+    expect(await tokenD.balanceOf(dxdao.address)).to.be.above(0)
+  })
+
+
 })
