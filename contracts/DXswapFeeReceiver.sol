@@ -54,7 +54,7 @@ contract DXswapFeeReceiver {
     }
 
     // Calculates the CREATE2 address for a pair without making any external calls
-    // Taken from DXswapRouter, removed the factory parameter
+    // Taken from DXswapLibrary, removed the factory parameter
     function pairFor(address tokenA, address tokenB) internal view returns (address pair) {
         (address token0, address token1) = sortTokens(tokenA, tokenB);
         pair = address(uint(keccak256(abi.encodePacked(
@@ -65,7 +65,7 @@ contract DXswapFeeReceiver {
             ))));
     }
     
-    // Taken from DXswapRouter, removed the deadline argument
+    // Done with code form DXswapRouter and DXswapLibrary, removed the deadline argument
     function _swapTokensForETH(uint amountIn, address fromToken)
         internal
     {
