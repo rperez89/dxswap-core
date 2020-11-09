@@ -124,8 +124,14 @@ describe('DXswapFeeReceiver', () => {
     await token1.transfer(pair.address, expandTo18Decimals(10))
     await pair.mint(wallet.address, overrides)
     
-    const token0FromProtocolFee = protocolFeeToReceive.mul(await token0.balanceOf(pair.address)).div(await pair.totalSupply()); 
-    const token1FromProtocolFee = protocolFeeToReceive.mul(await token1.balanceOf(pair.address)).div(await pair.totalSupply());
+    const protocolFeeLPToknesReceived = await pair.balanceOf(feeReceiver.address);
+    expect(protocolFeeLPToknesReceived.div(ROUND_EXCEPTION))
+    .to.be.eq(protocolFeeToReceive.div(ROUND_EXCEPTION))
+    
+    const token0FromProtocolFee = protocolFeeLPToknesReceived
+      .mul(await token0.balanceOf(pair.address)).div(await pair.totalSupply()); 
+    const token1FromProtocolFee = protocolFeeLPToknesReceived
+      .mul(await token1.balanceOf(pair.address)).div(await pair.totalSupply());
   
     const wethFromToken1FromProtocolFee = await getAmountOut(wethPair, token1.address, token1FromProtocolFee);
 
@@ -133,11 +139,16 @@ describe('DXswapFeeReceiver', () => {
 
     await feeReceiver.connect(wallet).takeProtocolFee([pair.address], overrides)
 
-    expect((await provider.getBalance(protocolFeeReceiver.address)).div(ROUND_EXCEPTION))
-      .to.be.eq(protocolFeeReceiverBalanceBeforeTake.add(wethFromToken1FromProtocolFee).div(ROUND_EXCEPTION))
-    expect(await token0.balanceOf(protocolFeeReceiver.address)).to.eq(0)
-    expect((await token0.balanceOf(dxdao.address)).div(ROUND_EXCEPTION))
-      .to.be.eq(token0FromProtocolFee.div(ROUND_EXCEPTION))
+    expect(await token0.balanceOf(feeReceiver.address)).to.eq(0)
+    expect(await token1.balanceOf(feeReceiver.address)).to.eq(0)
+    expect(await WETH.balanceOf(feeReceiver.address)).to.eq(0)
+    expect(await pair.balanceOf(feeReceiver.address)).to.eq(0)
+    expect(await provider.getBalance(feeReceiver.address)).to.eq(0)
+    
+    expect((await provider.getBalance(protocolFeeReceiver.address)))
+    .to.be.eq(protocolFeeReceiverBalanceBeforeTake.add(wethFromToken1FromProtocolFee))
+    expect((await token0.balanceOf(dxdao.address)))
+      .to.be.eq(token0FromProtocolFee)
   })
 
   it('should receive everything in ETH from one WETH-token1 pair', async () => {
