@@ -31,6 +31,17 @@ describe('DXswapFeeReceiver', () => {
   }
   const [dxdao, wallet, protocolFeeReceiver, other] = provider.getWallets()
   const loadFixture = createFixtureLoader(provider, [dxdao, wallet, protocolFeeReceiver])
+  
+  async function getAmountOut(pair: Contract, tokenIn: string, amountIn: BigNumber) {
+    const [ reserve0, reserve1 ] = await pair.getReserves();
+    const token0 = await pair.token0();
+    const tokenInBalance = token0 === tokenIn ? reserve0 : reserve1;
+    const tokenOutBalance = token0 === tokenIn ? reserve1 : reserve0;
+    const amountInWithFee = amountIn.mul(FEE_DENOMINATOR.sub(await pair.swapFee()));
+    const numerator = amountInWithFee.mul(tokenOutBalance);
+    const denominator = tokenInBalance.mul(FEE_DENOMINATOR).add(amountInWithFee);
+    return numerator.div(denominator);
+  }
 
   let factory: Contract
   let token0: Contract
@@ -59,7 +70,7 @@ describe('DXswapFeeReceiver', () => {
   {
     const tokenAmount = expandTo18Decimals(100);
     const wethAmount = expandTo18Decimals(100);
-    const swapAmount = expandTo18Decimals(50);
+    const amountIn = expandTo18Decimals(10);
 
     await token0.transfer(pair.address, tokenAmount)
     await token1.transfer(pair.address, tokenAmount)
@@ -69,18 +80,13 @@ describe('DXswapFeeReceiver', () => {
     await WETH.transfer(wethPair.address, wethAmount)
     await wethPair.mint(wallet.address, overrides)
     
-    const amountInWithFee = swapAmount.mul(FEE_DENOMINATOR.sub(15))
-    const numerator = amountInWithFee.mul(tokenAmount)
-    const denominator = tokenAmount.mul(FEE_DENOMINATOR).add(amountInWithFee)
-    const amountOut = numerator.div(denominator)
+    let amountOut = await getAmountOut(pair, token0.address, amountIn);
   
-    await token0.transfer(pair.address, swapAmount)
+    await token0.transfer(pair.address, amountIn)
     await pair.swap(0, amountOut, wallet.address, '0x', overrides)
 
-    // NOTE I think this swap is asking for less than it could get
-    // here cus it doesn't take into account the change from the previous swap
-    // For the purpose of these tests I think this is fine -JPK 11/08/20
-    await token1.transfer(pair.address, swapAmount)
+    amountOut = await getAmountOut(pair, token1.address, amountIn);
+    await token1.transfer(pair.address, amountIn)
     await pair.swap(amountOut, 0, wallet.address, '0x', overrides)
         
     await token0.transfer(pair.address, expandTo18Decimals(10))
@@ -100,28 +106,22 @@ describe('DXswapFeeReceiver', () => {
     
     const tokenAmount = expandTo18Decimals(100);
     const wethAmount = expandTo18Decimals(100);
-    const swapAmount = expandTo18Decimals(50);
+    const amountIn = expandTo18Decimals(50);
     
     await token1.transfer(wethPair.address, tokenAmount)
     await WETH.transfer(wethPair.address, wethAmount)
     await wethPair.mint(wallet.address, overrides)
-    
-    const amountInWithFee = swapAmount.mul(FEE_DENOMINATOR.sub(15))
-    const numerator = amountInWithFee.mul(tokenAmount)
-    const denominator = tokenAmount.mul(FEE_DENOMINATOR).add(amountInWithFee)
-    const amountOut = numerator.div(denominator)
-  
-    await token1.transfer(wethPair.address, swapAmount)
+      
+    let amountOut = await getAmountOut(wethPair, token1.address, amountIn);
+    await token1.transfer(wethPair.address, amountIn)
     await wethPair.swap(
       (token1.address < WETH.address) ? 0 : amountOut,
       (token1.address < WETH.address) ? amountOut : 0,
       wallet.address, '0x', overrides
     )
 
-    // NOTE I think this swap is asking for less than it could get
-    // here cus it doesn't take into account the change from the previous swap
-    // For the purpose of these tests I think this is fine -JPK 11/08/20
-    await WETH.transfer(wethPair.address, swapAmount)
+    amountOut = await getAmountOut(wethPair, WETH.address, amountIn);
+    await WETH.transfer(wethPair.address, amountIn)
     await wethPair.swap(
       (token1.address < WETH.address) ? amountOut : 0,
       (token1.address < WETH.address) ? 0 : amountOut,
@@ -149,7 +149,7 @@ describe('DXswapFeeReceiver', () => {
     const tokenB = await deployContract(wallet, ERC20, [expandTo18Decimals(10000)], overrides)
     
     const tokenAmount = expandTo18Decimals(100);
-    const swapAmount = expandTo18Decimals(50);
+    const amountIn = expandTo18Decimals(50);
     
     await factory.createPair(tokenA.address, tokenB.address);
     const newTokenPair = new Contract(
@@ -162,23 +162,17 @@ describe('DXswapFeeReceiver', () => {
     await tokenA.transfer(newTokenPair.address, tokenAmount)
     await tokenB.transfer(newTokenPair.address, tokenAmount)
     await newTokenPair.mint(wallet.address, overrides)
-    
-    const amountInWithFee = swapAmount.mul(FEE_DENOMINATOR.sub(15))
-    const numerator = amountInWithFee.mul(tokenAmount)
-    const denominator = tokenAmount.mul(FEE_DENOMINATOR).add(amountInWithFee)
-    const amountOut = numerator.div(denominator)
   
-    await tokenA.transfer(newTokenPair.address, swapAmount)
+    let amountOut = await getAmountOut(newTokenPair, tokenA.address, amountIn);
+    await tokenA.transfer(newTokenPair.address, amountIn)
     await newTokenPair.swap(
       (tokenA.address < tokenB.address) ? 0 : amountOut,
       (tokenA.address < tokenB.address) ? amountOut : 0,
       wallet.address, '0x', overrides
     )
 
-    // NOTE I think this swap is asking for less than it could get
-    // here cus it doesn't take into account the change from the previous swap
-    // For the purpose of these tests I think this is fine -JPK 11/08/20
-    await tokenB.transfer(newTokenPair.address, swapAmount)
+    amountOut = await getAmountOut(newTokenPair, tokenB.address, amountIn);
+    await tokenB.transfer(newTokenPair.address, amountIn)
     await newTokenPair.swap(
       (tokenA.address < tokenB.address) ? amountOut : 0,
       (tokenA.address < tokenB.address) ? 0 : amountOut,
@@ -205,12 +199,7 @@ describe('DXswapFeeReceiver', () => {
     async () =>
   {
     const tokenAmount = expandTo18Decimals(100);
-    const swapAmount = expandTo18Decimals(50);
-
-    const amountInWithFee = swapAmount.mul(FEE_DENOMINATOR.sub(15))
-    const numerator = amountInWithFee.mul(tokenAmount)
-    const denominator = tokenAmount.mul(FEE_DENOMINATOR).add(amountInWithFee)
-    const amountOut = numerator.div(denominator)
+    const amountIn = expandTo18Decimals(50);
 
     // Set up tokenA-tokenB
     const tokenA = await deployContract(wallet, ERC20, [expandTo18Decimals(10000)], overrides)
@@ -228,17 +217,16 @@ describe('DXswapFeeReceiver', () => {
     await tokenB.transfer(newTokenPair.address, tokenAmount)
     await newTokenPair.mint(wallet.address, overrides)
   
-    await tokenA.transfer(newTokenPair.address, swapAmount)
+    let amountOut = await getAmountOut(newTokenPair, tokenA.address, amountIn);
+    await tokenA.transfer(newTokenPair.address, amountIn)
     await newTokenPair.swap(
       (tokenA.address < tokenB.address) ? 0 : amountOut,
       (tokenA.address < tokenB.address) ? amountOut : 0,
       wallet.address, '0x', overrides
     )
 
-    // NOTE I think this swap is asking for less than it could get
-    // here cus it doesn't take into account the change from the previous swap
-    // For the purpose of these tests I think this is fine -JPK 11/08/20
-    await tokenB.transfer(newTokenPair.address, swapAmount)
+    amountOut = await getAmountOut(newTokenPair, tokenB.address, amountIn);
+    await tokenB.transfer(newTokenPair.address, amountIn)
     await newTokenPair.swap(
       (tokenA.address < tokenB.address) ? amountOut : 0,
       (tokenA.address < tokenB.address) ? 0 : amountOut,
@@ -265,17 +253,16 @@ describe('DXswapFeeReceiver', () => {
     await tokenD.transfer(secondNewTokenPair.address, tokenAmount)
     await secondNewTokenPair.mint(wallet.address, overrides)
 
-    await tokenC.transfer(secondNewTokenPair.address, swapAmount)
+    amountOut = await getAmountOut(secondNewTokenPair, tokenC.address, amountIn);
+    await tokenC.transfer(secondNewTokenPair.address, amountIn)
     await secondNewTokenPair.swap(
       (tokenC.address < tokenD.address) ? 0 : amountOut,
       (tokenC.address < tokenD.address) ? amountOut : 0,
       wallet.address, '0x', overrides
     )
 
-    // NOTE I think this swap is asking for less than it could get
-    // here cus it doesn't take into account the change from the previous swap
-    // For the purpose of these tests I think this is fine -JPK 11/08/20
-    await tokenD.transfer(secondNewTokenPair.address, swapAmount)
+    amountOut = await getAmountOut(secondNewTokenPair, tokenD.address, amountIn);
+    await tokenD.transfer(secondNewTokenPair.address, amountIn)
     await secondNewTokenPair.swap(
       (tokenC.address < tokenD.address) ? amountOut : 0,
       (tokenC.address < tokenD.address) ? 0 : amountOut,
@@ -323,24 +310,18 @@ describe('DXswapFeeReceiver', () => {
   {
     const tokenAmount = expandTo18Decimals(100);
     const wethAmount = expandTo18Decimals(100);
-    const swapAmount = expandTo18Decimals(50);
+    const amountIn = expandTo18Decimals(50);
 
     await token0.transfer(pair.address, tokenAmount)
     await token1.transfer(pair.address, tokenAmount)
     await pair.mint(wallet.address, overrides)
-        
-    const amountInWithFee = swapAmount.mul(FEE_DENOMINATOR.sub(15))
-    const numerator = amountInWithFee.mul(tokenAmount)
-    const denominator = tokenAmount.mul(FEE_DENOMINATOR).add(amountInWithFee)
-    const amountOut = numerator.div(denominator)
   
-    await token0.transfer(pair.address, swapAmount)
+    let amountOut = await getAmountOut(pair, token0.address, amountIn);
+    await token0.transfer(pair.address, amountIn)
     await pair.swap(0, amountOut, wallet.address, '0x', overrides)
 
-    // NOTE I think this swap is asking for less than it could get
-    // here cus it doesn't take into account the change from the previous swap
-    // For the purpose of these tests I think this is fine -JPK 11/08/20
-    await token1.transfer(pair.address, swapAmount)
+    amountOut = await getAmountOut(pair, token1.address, amountIn);
+    await token1.transfer(pair.address, amountIn)
     await pair.swap(amountOut, 0, wallet.address, '0x', overrides)
         
     await token0.transfer(pair.address, expandTo18Decimals(10))
