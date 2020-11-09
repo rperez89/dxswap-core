@@ -46,7 +46,8 @@ contract DXswapFeeReceiver {
         require(token0 != address(0), 'DXswapFeeReceiver: ZERO_ADDRESS');
     }
     
-    // Helper function to know if an address is a contract
+    // Helper function to know if an address is a contract, extcodesize returns the size of the code of a smart
+    //  contract in a specific address
     function isContract(address addr) internal returns (bool) {
         uint size;
         assembly { size := extcodesize(addr) }
