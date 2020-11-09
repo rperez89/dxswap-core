@@ -12,6 +12,7 @@ import ERC20 from '../build/ERC20.json'
 import DXswapFeeReceiver from '../build/DXswapFeeReceiver.json'
 
 const FEE_DENOMINATOR = bigNumberify(10).pow(4)
+const ROUND_EXCEPTION = bigNumberify(10000)
 
 chai.use(solidity)
 
@@ -42,6 +43,34 @@ describe('DXswapFeeReceiver', () => {
     const denominator = tokenInBalance.mul(FEE_DENOMINATOR).add(amountInWithFee);
     return numerator.div(denominator);
   }
+  
+  // Calculate how much will be payed from liquidity as protocol fee in the next mint/burn
+  async function calcProtocolFee(pair: Contract) {
+    const [token0Reserve, token1Reserve, _] = await pair.getReserves()
+    const kLast = await pair.kLast()
+    const feeTo = await factory.feeTo()
+    const protocolFeeDenominator = await factory.protocolFeeDenominator()
+    const totalSupply = await pair.totalSupply()
+    let rootK, rootKLast;
+    if (feeTo != AddressZero) {
+      // Check for math overflow when dealing with big big balances
+      if (Math.sqrt((token0Reserve).mul(token1Reserve)) > Math.pow(10, 19)) {
+        const denominator = 10 ** ( Number(Math.log10(Math.sqrt((token0Reserve).mul(token1Reserve))).toFixed(0)) - 18);
+        rootK = bigNumberify((Math.sqrt(
+          token0Reserve.mul(token1Reserve)
+        ) / denominator).toString())
+        rootKLast = bigNumberify((Math.sqrt(kLast) / denominator).toString())
+      } else {
+        rootK = bigNumberify(Math.sqrt((token0Reserve).mul(token1Reserve)).toString())
+        rootKLast = bigNumberify(Math.sqrt(kLast).toString())
+      }
+      
+      return (totalSupply.mul(rootK.sub(rootKLast)))
+        .div(rootK.mul(protocolFeeDenominator).add(rootKLast))
+    } else {
+      return bigNumberify(0)
+    }
+  } 
 
   let factory: Contract
   let token0: Contract
@@ -89,17 +118,26 @@ describe('DXswapFeeReceiver', () => {
     await token1.transfer(pair.address, amountIn)
     await pair.swap(amountOut, 0, wallet.address, '0x', overrides)
         
+    const protocolFeeToReceive = await calcProtocolFee(pair);
+    
     await token0.transfer(pair.address, expandTo18Decimals(10))
     await token1.transfer(pair.address, expandTo18Decimals(10))
     await pair.mint(wallet.address, overrides)
+    
+    const token0FromProtocolFee = protocolFeeToReceive.mul(await token0.balanceOf(pair.address)).div(await pair.totalSupply()); 
+    const token1FromProtocolFee = protocolFeeToReceive.mul(await token1.balanceOf(pair.address)).div(await pair.totalSupply());
   
-    const protocolFeeReceiverBalance = await provider.getBalance(protocolFeeReceiver.address)
+    const wethFromToken1FromProtocolFee = await getAmountOut(wethPair, token1.address, token1FromProtocolFee);
+
+    const protocolFeeReceiverBalanceBeforeTake = await provider.getBalance(protocolFeeReceiver.address)
 
     await feeReceiver.connect(wallet).takeProtocolFee([pair.address], overrides)
 
-    expect(await provider.getBalance(protocolFeeReceiver.address)).to.be.above(protocolFeeReceiverBalance.toString())
+    expect((await provider.getBalance(protocolFeeReceiver.address)).div(ROUND_EXCEPTION))
+      .to.be.eq(protocolFeeReceiverBalanceBeforeTake.add(wethFromToken1FromProtocolFee).div(ROUND_EXCEPTION))
     expect(await token0.balanceOf(protocolFeeReceiver.address)).to.eq(0)
-    expect(await token0.balanceOf(dxdao.address)).to.be.above(0)
+    expect((await token0.balanceOf(dxdao.address)).div(ROUND_EXCEPTION))
+      .to.be.eq(token0FromProtocolFee.div(ROUND_EXCEPTION))
   })
 
   it('should receive everything in ETH from one WETH-token1 pair', async () => {
