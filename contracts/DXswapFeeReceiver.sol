@@ -102,7 +102,7 @@ contract DXswapFeeReceiver {
         IWETH(WETH).withdraw(amount);
         TransferHelper.safeTransferETH(ethReceiver, amount);
       } else if (isContract(pairFor(token, WETH))) {
-        // If it is not WETH and there is a direct path to WETH, swap and trasnfer WETH to ETH receiver
+        // If it is not WETH and there is a direct path to WETH, swap and transfer WETH to ETH receiver
         _swapTokensForETH(amount, token);
       } else {
         // If it is not WETH and there is not a direct path to WETH, transfer tokens directly to fallback receiver

@@ -49,7 +49,7 @@ describe('DXswapFeeSetter', () => {
   })
 
   it('setFeeTo', async () => {
-    // Should not allow to setFeeTo from other address taht is not owner calling feeSetter
+    // Should not allow to setFeeTo from other address that is not owner calling feeSetter
     await expect(feeSetter.connect(other).setFeeTo(other.address)).to.be.revertedWith('DXswapFeeSetter: FORBIDDEN')
     await feeSetter.connect(dxdao).setFeeTo(dxdao.address)
 
