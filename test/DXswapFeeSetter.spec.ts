@@ -23,14 +23,15 @@ describe('DXswapFeeSetter', () => {
     mnemonic: 'horn horn horn horn horn horn horn horn horn horn horn horn',
     gasLimit: 9999999
   })
-  const [dxdao, pairOwner, other] = provider.getWallets()
-  const loadFixture = createFixtureLoader(provider, [dxdao, other])
+  const [dxdao, pairOwner, protocolFeeReceiver, other] = provider.getWallets()
+  const loadFixture = createFixtureLoader(provider, [dxdao, other, protocolFeeReceiver])
 
   let factory: Contract
   let token0: Contract
   let token1: Contract
   let pair: Contract
   let feeSetter: Contract
+  let feeReceiver: Contract
   beforeEach(async () => {
     const fixture = await loadFixture(pairFixture)
     factory = fixture.factory
@@ -38,20 +39,20 @@ describe('DXswapFeeSetter', () => {
     token1 = fixture.token1
     pair = fixture.pair
     feeSetter = fixture.feeSetter
+    feeReceiver = fixture.feeReceiver
   })
 
   it('feeToSetter', async () => {
-    expect(await factory.feeTo()).to.eq(dxdao.address)
+    expect(await factory.feeTo()).to.eq(feeReceiver.address)
     expect(await factory.feeToSetter()).to.eq(feeSetter.address)
     expect(await feeSetter.owner()).to.eq(dxdao.address)
   })
 
   it('setFeeTo', async () => {
-    // Should not allow to setFeeTo from other address taht is not owner calling feeSetter
+    // Should not allow to setFeeTo from other address that is not owner calling feeSetter
     await expect(feeSetter.connect(other).setFeeTo(other.address)).to.be.revertedWith('DXswapFeeSetter: FORBIDDEN')
     await feeSetter.connect(dxdao).setFeeTo(dxdao.address)
-    expect(await factory.feeTo()).to.eq(dxdao.address)
-    
+
     // If feeToSetter changes it will will fail in DXswapFactory check when trying to setFeeTo from FeeSetter.
     await feeSetter.connect(dxdao).setFeeToSetter(other.address)
     await expect(feeSetter.connect(dxdao).setFeeTo(dxdao.address)).to.be.revertedWith('DXswapFactory: FORBIDDEN')

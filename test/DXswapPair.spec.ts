@@ -23,8 +23,8 @@ describe('DXswapPair', () => {
     mnemonic: 'horn horn horn horn horn horn horn horn horn horn horn horn',
     gasLimit: 9999999
   })
-  const [wallet, other] = provider.getWallets()
-  const loadFixture = createFixtureLoader(provider, [wallet])
+  const [dxdao, wallet, protocolFeeReceiver, other] = provider.getWallets()
+  const loadFixture = createFixtureLoader(provider, [dxdao, wallet, protocolFeeReceiver])
 
   let factory: Contract
   let token0: Contract
@@ -49,7 +49,7 @@ describe('DXswapPair', () => {
     await token1.transfer(pair.address, token1Amount)
 
     const expectedLiquidity = expandTo18Decimals(2)
-    await expect(pair.mint(wallet.address, overrides))
+    await expect(pair.connect(wallet).mint(wallet.address, overrides))
       .to.emit(pair, 'Transfer')
       .withArgs(AddressZero, AddressZero, MINIMUM_LIQUIDITY)
       .to.emit(pair, 'Transfer')
@@ -71,7 +71,7 @@ describe('DXswapPair', () => {
   async function addLiquidity(token0Amount: BigNumber, token1Amount: BigNumber) {
     await token0.transfer(pair.address, token0Amount)
     await token1.transfer(pair.address, token1Amount)
-    await pair.mint(wallet.address, overrides)
+    await pair.connect(wallet).mint(wallet.address, overrides)
   }
   const swapTestCases: BigNumber[][] = [
     [1, 5, 10],
@@ -126,7 +126,7 @@ describe('DXswapPair', () => {
     const swapAmount = expandTo18Decimals(1)
     const expectedOutputAmount = bigNumberify('1662497915624478906')
     await token0.transfer(pair.address, swapAmount)
-    await expect(pair.swap(0, expectedOutputAmount, wallet.address, '0x', overrides))
+    await expect(pair.connect(wallet).swap(0, expectedOutputAmount, wallet.address, '0x', overrides))
       .to.emit(token1, 'Transfer')
       .withArgs(pair.address, wallet.address, expectedOutputAmount)
       .to.emit(pair, 'Sync')
@@ -153,7 +153,7 @@ describe('DXswapPair', () => {
     const swapAmount = expandTo18Decimals(1)
     const expectedOutputAmount = bigNumberify('453305446940074565')
     await token1.transfer(pair.address, swapAmount)
-    await expect(pair.swap(expectedOutputAmount, 0, wallet.address, '0x', overrides))
+    await expect(pair.connect(wallet).swap(expectedOutputAmount, 0, wallet.address, '0x', overrides))
       .to.emit(token0, 'Transfer')
       .withArgs(pair.address, wallet.address, expectedOutputAmount)
       .to.emit(pair, 'Sync')
@@ -196,8 +196,8 @@ describe('DXswapPair', () => {
     await addLiquidity(token0Amount, token1Amount)
 
     const expectedLiquidity = expandTo18Decimals(3)
-    await pair.transfer(pair.address, expectedLiquidity.sub(MINIMUM_LIQUIDITY))
-    await expect(pair.burn(wallet.address, overrides))
+    await pair.connect(wallet).transfer(pair.address, expectedLiquidity.sub(MINIMUM_LIQUIDITY))
+    await expect(pair.connect(wallet).burn(wallet.address, overrides))
       .to.emit(pair, 'Transfer')
       .withArgs(pair.address, AddressZero, expectedLiquidity.sub(MINIMUM_LIQUIDITY))
       .to.emit(token0, 'Transfer')
@@ -260,11 +260,11 @@ describe('DXswapPair', () => {
     const swapAmount = expandTo18Decimals(1)
     const expectedOutputAmount = bigNumberify('996006981039903216')
     await token1.transfer(pair.address, swapAmount)
-    await pair.swap(expectedOutputAmount, 0, wallet.address, '0x', overrides)
+    await pair.connect(wallet).swap(expectedOutputAmount, 0, wallet.address, '0x', overrides)
 
     const expectedLiquidity = expandTo18Decimals(1000)
-    await pair.transfer(pair.address, expectedLiquidity.sub(MINIMUM_LIQUIDITY))
-    await pair.burn(wallet.address, overrides)
+    await pair.connect(wallet).transfer(pair.address, expectedLiquidity.sub(MINIMUM_LIQUIDITY))
+    await pair.connect(wallet).burn(wallet.address, overrides)
     expect(await pair.totalSupply()).to.eq(MINIMUM_LIQUIDITY)
   })
   
@@ -281,11 +281,11 @@ describe('DXswapPair', () => {
     
     // Attack pool
     await token1.transfer(pair.address, expandTo18Decimals(1))
-    await expect(pair.swap(expandTo18Decimals(999), 0, wallet.address, '0x', overrides)).to.be.revertedWith(
+    await expect(pair.connect(wallet).swap(expandTo18Decimals(999), 0, wallet.address, '0x', overrides)).to.be.revertedWith(
       'DXswapPair: K'
     )
     await token0.transfer(pair.address, expandTo18Decimals(1))
-    await expect(pair.swap(0, expandTo18Decimals(999), wallet.address, '0x', overrides)).to.be.revertedWith(
+    await expect(pair.connect(wallet).swap(0, expandTo18Decimals(999), wallet.address, '0x', overrides)).to.be.revertedWith(
       'DXswapPair: K'
     )
 
@@ -295,8 +295,8 @@ describe('DXswapPair', () => {
     expect(await token1.balanceOf(wallet.address)).to.eq(expandTo18Decimals(8999)) 
     
     const expectedLiquidity = expandTo18Decimals(1000)
-    await pair.transfer(pair.address, expectedLiquidity.sub(MINIMUM_LIQUIDITY))
-    await pair.burn(wallet.address, overrides)
+    await pair.connect(wallet).transfer(pair.address, expectedLiquidity.sub(MINIMUM_LIQUIDITY))
+    await pair.connect(wallet).burn(wallet.address, overrides)
     expect(await pair.totalSupply()).to.eq(MINIMUM_LIQUIDITY)
   })
 
@@ -310,11 +310,11 @@ describe('DXswapPair', () => {
     const swapAmount = expandTo18Decimals(1)
     const expectedOutputAmount = bigNumberify('996006981039903216')
     await token1.transfer(pair.address, swapAmount)
-    await pair.swap(expectedOutputAmount, 0, wallet.address, '0x', overrides)
+    await pair.connect(wallet).swap(expectedOutputAmount, 0, wallet.address, '0x', overrides)
 
     const expectedLiquidity = expandTo18Decimals(1000)
-    await pair.transfer(pair.address, expectedLiquidity.sub(MINIMUM_LIQUIDITY))
-    await pair.burn(wallet.address, overrides)
+    await pair.connect(wallet).transfer(pair.address, expectedLiquidity.sub(MINIMUM_LIQUIDITY))
+    await pair.connect(wallet).burn(wallet.address, overrides)
     expect(await pair.totalSupply()).to.eq(MINIMUM_LIQUIDITY.add('149850284580759'))
     expect(await pair.balanceOf(other.address)).to.eq('149850284580759')
 
@@ -335,11 +335,11 @@ describe('DXswapPair', () => {
     const swapAmount = expandTo18Decimals(1)
     const expectedOutputAmount = bigNumberify('996006981039903216')
     await token1.transfer(pair.address, swapAmount)
-    await pair.swap(expectedOutputAmount, 0, wallet.address, '0x', overrides)
+    await pair.connect(wallet).swap(expectedOutputAmount, 0, wallet.address, '0x', overrides)
 
     const expectedLiquidity = expandTo18Decimals(1000)
-    await pair.transfer(pair.address, expectedLiquidity.sub(MINIMUM_LIQUIDITY))
-    await pair.burn(wallet.address, overrides)
+    await pair.connect(wallet).transfer(pair.address, expectedLiquidity.sub(MINIMUM_LIQUIDITY))
+    await pair.connect(wallet).burn(wallet.address, overrides)
     const expectedTotalSupply = bigNumberify('124875234033868')
 
     expect((await pair.totalSupply()).div(ROUND_EXCEPTION))
@@ -367,11 +367,11 @@ describe('DXswapPair', () => {
     const swapAmount = expandTo18Decimals(1)
     const expectedOutputAmount = swapAmount.mul(98).div(100)
     await token1.transfer(pair.address, swapAmount)
-    await pair.swap(expectedOutputAmount, 0, wallet.address, '0x', overrides)
+    await pair.connect(wallet).swap(expectedOutputAmount, 0, wallet.address, '0x', overrides)
 
     const expectedLiquidity = expandTo18Decimals(1000)
-    await pair.transfer(pair.address, expectedLiquidity.sub(MINIMUM_LIQUIDITY))
-    await pair.burn(wallet.address, overrides)
+    await pair.connect(wallet).transfer(pair.address, expectedLiquidity.sub(MINIMUM_LIQUIDITY))
+    await pair.connect(wallet).burn(wallet.address, overrides)
     const expectedTotalSupply = bigNumberify('4754954780487545')
 
     expect((await pair.totalSupply()).div(ROUND_EXCEPTION))
