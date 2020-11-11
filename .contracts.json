@@ -1,7 +1,8 @@
 {
   "rinkeby" : {
-    "deployer": "0xe21442C140B788b572126E397CC35b82A1593e32",
-    "factory": "0x01DBa8425F7d8A5E999d2271b40eb869afcee6d4",
-    "feeSetter": "0x57Cca631eb9Da7225dfd96CA15F4e944F46e35A6"
+    "deployer": "0x201cf332a4a00534da466dd24ba1029313328e91",
+    "factory": "0x4b5994e98fc624d24168062563200016ed658b99",
+    "feeReceiver": "0xfa102bdfa3af9347e75d181df499f6cb4a7a6168",
+    "feeSetter": "0x0db744f97834d1131b0a31d69c42426f4fd56906"
   }
 }
