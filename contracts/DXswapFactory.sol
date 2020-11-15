@@ -6,7 +6,7 @@ import './DXswapPair.sol';
 contract DXswapFactory is IDXswapFactory {
     address public feeTo;
     address public feeToSetter;
-    uint8 public protocolFeeDenominator = 9; // uses ~0.10% of each swap fee
+    uint8 public protocolFeeDenominator = 9; // uses ~10% of each swap fee
     bytes32 public constant INIT_CODE_PAIR_HASH = keccak256(abi.encodePacked(type(DXswapPair).creationCode));
 
     mapping(address => mapping(address => address)) public getPair;
