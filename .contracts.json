@@ -1,8 +1,14 @@
 {
-  "rinkeby" : {
+  "rinkeby": {
     "deployer": "0x1388B4C283F4443BD05C891D0D5F8Ad75A264693",
     "factory": "0x02f45e773436C6D96Cc73600fe94a660ec67734C",
     "feeReceiver": "0x5794fbfbf1561ec560c416dcd9e8f09f3d10c6ee",
     "feeSetter": "0x6ca023b5c2ab5eae504a710f4d6ed8b5aa74f3fb"
+  },
+  "mainnet": {
+    "deployer": "0xE0D1FE614f8Ef35D66F44fDf9fE1d5b69eF59Ef5",
+    "factory": "0xd34971BaB6E5E356fd250715F5dE0492BB070452",
+    "feeReceiver": "0xC6130400C1e3cD7b352Db75055dB9dD554E00Ef0",
+    "feeSetter": "0x288879b3CaFA044dB6Ba18ee638BBC1a233F8548"
   }
 }
