@@ -2,7 +2,7 @@ const HDWalletProvider = require('truffle-hdwallet-provider')
 const { wrapProvider } = require('arb-ethers-web3-bridge')
 require('dotenv').config()
 
-privateKey = process.env.PRIVATE_KEY
+mnemonic = process.env.MNEMONIC
 infuraApiKey = process.env.KEY_INFURA_API_KEY
 
 module.exports = {
@@ -23,7 +23,7 @@ module.exports = {
     },
     mainnet: {
       provider: function() {
-        return new HDWalletProvider(privateKey, `https://mainnet.infura.io/v3/${infuraApiKey}`)
+        return new HDWalletProvider(mnemonic, `https://mainnet.infura.io/v3/${infuraApiKey}`)
       },
       network_id: '1',
       gas: 9000000,
@@ -31,7 +31,7 @@ module.exports = {
     },
     rinkeby: {
       provider: function() {
-        return new HDWalletProvider(privateKey, `https://rinkeby.infura.io/v3/${infuraApiKey}`)
+        return new HDWalletProvider(mnemonic, `https://rinkeby.infura.io/v3/${infuraApiKey}`)
       },
       network_id: '4',
       gas: 9000000,
@@ -39,7 +39,7 @@ module.exports = {
     },
     ropsten: {
       provider: function() {
-        return new HDWalletProvider(privateKey, `https://ropsten.infura.io/v3/${infuraApiKey}`)
+        return new HDWalletProvider(mnemonic, `https://ropsten.infura.io/v3/${infuraApiKey}`)
       },
       network_id: '3',
       gas: 8000000,
@@ -47,7 +47,7 @@ module.exports = {
     },
     kovan: {
       provider: function() {
-        return new HDWalletProvider(privateKey, `https://kovan.infura.io/v3/${infuraApiKey}`)
+        return new HDWalletProvider(mnemonic, `https://kovan.infura.io/v3/${infuraApiKey}`)
       },
       network_id: '42',
       gas: 9000000,
@@ -55,7 +55,7 @@ module.exports = {
     },
     arbitrumTestnetV3: {
       provider: function() {
-        return wrapProvider(new HDWalletProvider(privateKey, 'https://kovan3.arbitrum.io/rpc'))
+        return wrapProvider(new HDWalletProvider(mnemonic, 'https://kovan3.arbitrum.io/rpc'))
       },
       network_id: '79377087078960',
       gas: 9000000,
