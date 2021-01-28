@@ -1,6 +1,6 @@
 {
   "name": "dxswap-core",
-  "version": "0.3.0",
+  "version": "0.3.3",
   "files": [
     "contracts",
     "build"
@@ -11,6 +11,7 @@
   "devDependencies": {
     "@types/chai": "^4.2.6",
     "@types/mocha": "^5.2.7",
+    "arb-ethers-web3-bridge": "^0.7.3",
     "chai": "^4.2.0",
     "dotenv": "^8.2.0",
     "ethereum-waffle": "^2.4.1",
