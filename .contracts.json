@@ -16,5 +16,17 @@
     "factory": "0x2Fc759A22aFd8025940617Baf609F8C2a696315c",
     "feeReceiver": "0x28219E330F19bCA7D53d2AE40CA5000Af575D445",
     "feeSetter": "0x8d8FB6d95635513429355cd890A33426D0F7912d"
+  },
+  "sokol": {
+    "deployer": "0xee514cde999a30047D57c329f874F64b8A98FF46",
+    "factory": "0x30FB5b5a25D211B91B1d7FFb07d1a059452452aE",
+    "feeReceiver": "0x1afE40d8A67b92A1f95cAf646EcbBcF5Ce15048d",
+    "feeSetter": "0x80b10580F835a97d2ab536614354d1A5A8782bF8"
+  },
+  "xdai": {
+    "deployer": "0x3a5e7db2E0EA9e69fB53Cd8582e64D4001746E8c",
+    "factory": "0x2A4d822BFB34d377c978F28a6C332Caa2fF87530",
+    "feeReceiver": "0x35D6445E0D43fdDc23ac4cdb6222cDEdF5E715eE",
+    "feeSetter": "0xA897716BA0c7603B10b8b2854c104912a6058542"
   }
 }
