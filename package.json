@@ -1,6 +1,6 @@
 {
   "name": "dxswap-core",
-  "version": "0.3.7",
+  "version": "0.3.8",
   "files": [
     "contracts",
     "build"
