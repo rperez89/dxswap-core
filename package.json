@@ -1,6 +1,6 @@
 {
-  "name": "dxswap-core",
-  "version": "0.3.10",
+  "name": "@swapr/core",
+  "version": "0.3.11",
   "files": [
     "contracts",
     "build",
