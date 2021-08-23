@@ -1,9 +1,10 @@
 {
-  "name": "dxswap-core",
-  "version": "0.3.9",
+  "name": "@swapr/core",
+  "version": "0.3.11",
   "files": [
     "contracts",
-    "build"
+    "build",
+    ".contracts.json"
   ],
   "engines": {
     "node": ">=10"
