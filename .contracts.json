@@ -37,8 +37,8 @@
   },
   "arbitrumRinkebyTestnet": {
     "deployer": "0x0000000000000000000000000000000000000000",
-    "factory": "0x5c702Fbbcfb8EF5cc70c4E4341AA437ef9D55281",
-    "feeReceiver": "0xaE909196e549587b8Dc0D26cdbf05B754BB580B3",
-    "feeSetter": "0x317113D2593e3efF1FfAE0ba2fF7A61861Df7ae5"
+    "factory": "0xE6D1497b94372F6A297cC084d1ec41A53Aa19179",
+    "feeReceiver": "0x0a57c238a9C1F158e7a0fF70DA834a3c43c9E246",
+    "feeSetter": "0x24a66c38eE891f4c92Dc59E6461dE3Eaafe05cBa"
   }
 }

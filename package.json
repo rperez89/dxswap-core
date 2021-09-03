@@ -34,7 +34,7 @@
     "compile": "waffle .waffle.json",
     "pretest": "yarn compile",
     "test": "mocha",
-    "prepublishOnly": "yarn test",
+
     "flattener": "./scripts/flattener.sh"
   },
   "license": "AGPL-3.0-or-later",
