@@ -1,6 +1,6 @@
 {
   "name": "@swapr/core",
-  "version": "0.3.19",
+  "version": "0.3.20",
   "files": [
     "contracts",
     "build",
@@ -34,7 +34,6 @@
     "compile": "waffle .waffle.json",
     "pretest": "yarn compile",
     "test": "mocha",
-
     "flattener": "./scripts/flattener.sh"
   },
   "license": "AGPL-3.0-or-later",
