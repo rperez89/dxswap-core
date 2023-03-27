@@ -1,23 +1,22 @@
 import '@nomiclabs/hardhat-ethers'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { expect } from 'chai'
-import { ethers } from "hardhat";
+import { ethers } from 'hardhat'
 import { BigNumber, constants } from 'ethers'
 import { factoryFixture } from './shared/fixtures'
 import { DXswapFactory, DXswapFeeSetter, DXswapPair__factory } from './../typechain'
-import { bytecode as dxSwapPairBytecode } from '../build/artifacts/contracts/DXswapPair.sol/DXswapPair.json'
-import { getCreate2Address } from './shared/utilities';
-
+import { bytecode as dxSwapPairBytecode } from '../build/artifacts-zk/contracts/DXswapPair.sol/DXswapPair.json'
+import { getCreate2Address } from './shared/utilities'
 
 const { AddressZero } = constants
 
 const TEST_ADDRESSES: [string, string] = [
   '0x1000000000000000000000000000000000000000',
-  '0x2000000000000000000000000000000000000000'
+  '0x2000000000000000000000000000000000000000',
 ]
 
 const overrides = {
-  gasLimit: 9999999
+  gasLimit: 9999999,
 }
 
 describe('DXswapFactory', () => {
@@ -47,15 +46,17 @@ describe('DXswapFactory', () => {
     feeSetter = fixture.feeSetter
 
     // Set feeToSetter to dxdao.address to test the factory methdos from an ETH account
-    await feeSetter.setFeeTo(AddressZero, overrides);
-    await feeSetter.setFeeToSetter(randomTestFeeSetter.address);
+    await feeSetter.setFeeTo(AddressZero, overrides)
+    await feeSetter.setFeeToSetter(randomTestFeeSetter.address)
   })
 
   it('feeTo, feeToSetter, allPairsLength, INIT_CODE_PAIR_HASH', async () => {
     expect(await factory.feeTo()).to.eq(AddressZero)
     expect(await factory.feeToSetter()).to.eq(randomTestFeeSetter.address)
     expect(await factory.allPairsLength()).to.eq(0)
-    expect(await factory.INIT_CODE_PAIR_HASH()).to.eq('0x9e43bdf627764c4a3e3e452d1b558fff8466adc4dc8a900396801d26f4c542f2')
+    expect(await factory.INIT_CODE_PAIR_HASH()).to.eq(
+      '0x9e43bdf627764c4a3e3e452d1b558fff8466adc4dc8a900396801d26f4c542f2'
+    )
   })
 
   async function createPair(tokens: [string, string]) {
@@ -94,13 +95,17 @@ describe('DXswapFactory', () => {
   })
 
   it('setFeeTo', async () => {
-    await expect(factory.connect(other).setFeeTo(other.address, overrides)).to.be.revertedWith('DXswapFactory: FORBIDDEN')
+    await expect(factory.connect(other).setFeeTo(other.address, overrides)).to.be.revertedWith(
+      'DXswapFactory: FORBIDDEN'
+    )
     await factory.connect(randomTestFeeSetter).setFeeTo(dxdao.address, overrides)
     expect(await factory.feeTo()).to.eq(dxdao.address)
   })
 
   it('setFeeToSetter', async () => {
-    await expect(factory.connect(other).setFeeToSetter(other.address, overrides)).to.be.revertedWith('DXswapFactory: FORBIDDEN')
+    await expect(factory.connect(other).setFeeToSetter(other.address, overrides)).to.be.revertedWith(
+      'DXswapFactory: FORBIDDEN'
+    )
     await factory.connect(randomTestFeeSetter).setFeeToSetter(other.address, overrides)
     expect(await factory.feeToSetter()).to.eq(other.address)
     await expect(factory.setFeeToSetter(dxdao.address)).to.be.revertedWith('DXswapFactory: FORBIDDEN')

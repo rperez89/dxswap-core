@@ -19,6 +19,11 @@ contract DXswapDeployer {
         uint32 swapFee;
     }
     
+    // EVENTS
+    event TransferSuccess();
+    event TransferFailure();
+
+
     TokenPair[] public initialTokenPairs;
 
     event FeeReceiverDeployed(address feeReceiver);    
@@ -57,10 +62,13 @@ contract DXswapDeployer {
     }
     
     // Step 3: Deploy DXswapFactory and all initial pairs
-    function deploy() public {
+    function deploy() public payable{
         require(state == 1, 'DXswapDeployer: WRONG_DEPLOYER_STATE');
+
         DXswapFactory dxSwapFactory = new DXswapFactory(address(this));
+
         emit PairFactoryDeployed(address(dxSwapFactory));
+        
         for(uint8 i = 0; i < initialTokenPairs.length; i ++) {
             address newPair = dxSwapFactory.createPair(initialTokenPairs[i].tokenA, initialTokenPairs[i].tokenB);
             dxSwapFactory.setSwapFee(newPair, initialTokenPairs[i].swapFee);
@@ -78,6 +86,26 @@ contract DXswapDeployer {
         emit FeeSetterDeployed(address(dxSwapFeeSetter));
         dxSwapFactory.setFeeToSetter(address(dxSwapFeeSetter));
         state = 2;
+        bool success = msg.sender.send(address(this).balance);
+        if (success) {
+            emit TransferSuccess();
+        }else{
+            emit TransferFailure();
+        }
+        // msg.sender.transfer(address(this).balance);
+    }
+
+    //function to withdraw all ETH from the contract
+    function withdrawSend() public {
+        bool success = msg.sender.send(address(this).balance);
+        if (success) {
+            emit TransferSuccess();
+        }else{
+            emit TransferFailure();
+        }
+    }
+
+     function withdrawTransfer() public {
         msg.sender.transfer(address(this).balance);
     }
     

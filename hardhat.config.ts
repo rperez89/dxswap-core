@@ -17,6 +17,22 @@ dotenv.config()
 const infuraKey = process.env.INFURA_KEY
 const accounts = process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : []
 
+const zkSyncTestnet =
+  process.env.NODE_ENV == 'test'
+    ? {
+        url: 'http://localhost:3050',
+        ethNetwork: 'http://localhost:8545',
+        // chainId: 270,
+        zksync: true,
+      }
+    : {
+        url: 'https://zksync2-testnet.zksync.dev',
+        ethNetwork: 'goerli',
+        zksync: true,
+        // chainId: 280,
+        verifyURL: 'https://zksync2-testnet-explorer.zksync.dev/contract_verification',
+      }
+
 const config: HardhatUserConfig = {
   solidity: {
     compilers: [
@@ -38,19 +54,10 @@ const config: HardhatUserConfig = {
     sources: 'contracts',
     deployments: 'deployments',
   },
-  defaultNetwork: 'hardhat',
+  defaultNetwork: 'zkSyncTestnet',
   networks: {
     hardhat: {
-      blockGasLimit: 30000000, //default 30 000 000
-      gasPrice: 1000000000, //10 Gwei
-      gas: 9000000,
-      chainId: 1, //set mainnet ID
-      zksync: false,
-    },
-    localhost: {
-      url: 'http://localhost:8545',
-      gasPrice: 20000000000, //20 Gwei,
-      zksync: false,
+      zksync: true,
     },
     mainnet: {
       live: true,
@@ -73,13 +80,7 @@ const config: HardhatUserConfig = {
       accounts,
       zksync: false,
     },
-    zkSyncTestnet: {
-      url: 'https://zksync2-testnet.zksync.dev',
-      ethNetwork: 'goerli', // or a Goerli RPC endpoint from Infura/Alchemy/Chainstack etc.
-      zksync: true,
-      chainId: 280,
-      verifyURL: 'https://zksync2-testnet-explorer.zksync.dev/contract_verification',
-    },
+    zkSyncTestnet,
   },
   typechain: {
     outDir: 'typechain',
