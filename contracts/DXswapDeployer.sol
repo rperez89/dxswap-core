@@ -62,7 +62,7 @@ contract DXswapDeployer {
     }
     
     // Step 3: Deploy DXswapFactory and all initial pairs
-    function deploy() public payable{
+    function deploy() public{
         require(state == 1, 'DXswapDeployer: WRONG_DEPLOYER_STATE');
 
         DXswapFactory dxSwapFactory = new DXswapFactory(address(this));
@@ -106,8 +106,7 @@ contract DXswapDeployer {
     }
 
      function withdrawTransfer() public {
-        msg.sender.transfer(address(this).balance);
+        address payable to = msg.sender;
+        to.transfer(address(this).balance);
     }
-    
-  
 }
