@@ -22,14 +22,14 @@ const zkSyncTestnet =
     ? {
         url: 'http://localhost:3050',
         ethNetwork: 'http://localhost:8545',
-        // chainId: 270,
+        chainId: 270,
         zksync: true,
       }
     : {
         url: 'https://zksync2-testnet.zksync.dev',
         ethNetwork: 'goerli',
         zksync: true,
-        // chainId: 280,
+        chainId: 280,
         verifyURL: 'https://zksync2-testnet-explorer.zksync.dev/contract_verification',
       }
 
@@ -59,6 +59,7 @@ const config: HardhatUserConfig = {
     hardhat: {
       zksync: true,
     },
+
     mainnet: {
       live: true,
       saveDeployments: true,
