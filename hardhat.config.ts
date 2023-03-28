@@ -102,7 +102,7 @@ const config: HardhatUserConfig = {
     paths: ['./contracts/test'],
   },
   zksolc: {
-    version: '1.3.5',
+    version: '1.3.7',
     compilerSource: 'binary',
     settings: {},
   },
