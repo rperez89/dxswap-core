@@ -17,7 +17,7 @@ async function main(hre: HardhatRuntimeEnvironment) {
   console.log('hre', hre.network.name)
 
   console.log('constructorArgs', constructorArgs)
-  const result = await run('verify:verify', {
+  const result = await hre.run('verify:verify', {
     address: '0x841d1f482db6CaCB13b67042c1bc61c352D4365C',
     contract: contractFullyQualifedName,
     constructorArguments: constructorArgs,
