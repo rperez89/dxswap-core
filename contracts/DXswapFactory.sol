@@ -12,7 +12,7 @@ contract DXswapFactory is IDXswapFactory {
     mapping(address => mapping(address => address)) public getPair;
     address[] public allPairs;
 
-    event PairCreated(address indexed token0, address indexed token1, address pair, uint);
+    // event PairCreated(address indexed token0, address indexed token1, address pair, uint);
 
     constructor(address _feeToSetter) {
         feeToSetter = _feeToSetter;
