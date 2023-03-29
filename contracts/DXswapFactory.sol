@@ -1,4 +1,4 @@
-pragma solidity =0.5.16;
+pragma solidity ^0.8.0;
 
 import './interfaces/IDXswapFactory.sol';
 import './DXswapPair.sol';
@@ -14,15 +14,15 @@ contract DXswapFactory is IDXswapFactory {
 
     event PairCreated(address indexed token0, address indexed token1, address pair, uint);
 
-    constructor(address _feeToSetter) public {
+    constructor(address _feeToSetter) {
         feeToSetter = _feeToSetter;
     }
 
-    function allPairsLength() external view returns (uint) {
+    function allPairsLength() external view override returns (uint) {
         return allPairs.length;
     }
 
-    function createPair(address tokenA, address tokenB) external returns (address pair) {
+    function createPair(address tokenA, address tokenB) external override returns (address pair) {
         require(tokenA != tokenB, 'DXswapFactory: IDENTICAL_ADDRESSES');
         (address token0, address token1) = tokenA < tokenB ? (tokenA, tokenB) : (tokenB, tokenA);
         require(token0 != address(0), 'DXswapFactory: ZERO_ADDRESS');
@@ -39,23 +39,23 @@ contract DXswapFactory is IDXswapFactory {
         emit PairCreated(token0, token1, pair, allPairs.length);
     }
 
-    function setFeeTo(address _feeTo) external {
+    function setFeeTo(address _feeTo) external override {
         require(msg.sender == feeToSetter, 'DXswapFactory: FORBIDDEN');
         feeTo = _feeTo;
     }
 
-    function setFeeToSetter(address _feeToSetter) external {
+    function setFeeToSetter(address _feeToSetter) external override {
         require(msg.sender == feeToSetter, 'DXswapFactory: FORBIDDEN');
         feeToSetter = _feeToSetter;
     }
-    
-    function setProtocolFee(uint8 _protocolFeeDenominator) external {
+
+    function setProtocolFee(uint8 _protocolFeeDenominator) external override {
         require(msg.sender == feeToSetter, 'DXswapFactory: FORBIDDEN');
         require(_protocolFeeDenominator > 0, 'DXswapFactory: FORBIDDEN_FEE');
         protocolFeeDenominator = _protocolFeeDenominator;
     }
-    
-    function setSwapFee(address _pair, uint32 _swapFee) external {
+
+    function setSwapFee(address _pair, uint32 _swapFee) external override {
         require(msg.sender == feeToSetter, 'DXswapFactory: FORBIDDEN');
         IDXswapPair(_pair).setSwapFee(_swapFee);
     }

@@ -14,7 +14,7 @@
     "@ethersproject/providers": "^5.4.7",
     "@matterlabs/hardhat-zksync-deploy": "^0.6.3",
     "@matterlabs/hardhat-zksync-solc": "^0.3.14",
-    "@matterlabs/hardhat-zksync-verify": "^0.1.4",
+    "@matterlabs/hardhat-zksync-verify": "file:.yalc/@matterlabs/hardhat-zksync-verify",
     "@nomicfoundation/hardhat-chai-matchers": "^1.0.1",
     "@nomicfoundation/hardhat-network-helpers": "^1.0.2",
     "@nomiclabs/hardhat-ethers": "^2.0.0",

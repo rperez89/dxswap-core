@@ -116,7 +116,13 @@ describe('DXswapDeployer', () => {
     const balance = await provider.getBalance(dxSwapDeployer.address)
     console.log('balance', ethers.utils.formatEther(balance))
 
-    await (await dxSwapDeployer.withdrawTransfer()).wait()
+    const da = await (await dxSwapDeployer.withdrawCall({ gasLimit: 5000000 })).wait()
+
+    da.events.forEach((e: any) => {
+      console.log('e', e)
+    })
+    // check event log for TransferFailure
+    // await expect(dxSwapDeployer.withdrawSend()).to.emit(dxSwapDeployer, 'TransferSuccess')
 
     const balance2 = await provider.getBalance(dxSwapDeployer.address)
     console.log('balance2', ethers.utils.formatEther(balance2))
