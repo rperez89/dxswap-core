@@ -99,24 +99,25 @@ describe('DXswapDeployer', () => {
     const d = await dxdao.sendTransaction({
       to: dxSwapDeployer.address,
       gasPrice: 20000000000,
-      value: expandTo18Decimals(10),
+      value: expandTo18Decimals(10), // send 10 ether to contract
     })
     await d.wait(1)
 
     // get balance of dxSwapDeployer contract and print it out using ethers utils to format it
     const balance = await provider.getBalance(dxSwapDeployer.address)
-    console.log('balance', ethers.utils.formatEther(balance))
+    console.log('balance contract', ethers.utils.formatEther(balance))
 
-    const da = await (await dxSwapDeployer.withdrawCall({ gasLimit: 5000000 })).wait()
+    // const da = await (await dxSwapDeployer.withdrawCall({ gasLimit: 5000000 })).wait()
+    const da = await (await dxSwapDeployer.withdrawCall()).wait()
 
-    da.events.forEach((e: any) => {
-      console.log('e', e)
-    })
+    // da.events.forEach((e: any) => {
+    //   console.log('e', e)
+    // })
     // check event log for TransferFailure
     // await expect(dxSwapDeployer.withdrawSend()).to.emit(dxSwapDeployer, 'TransferSuccess')
 
     const balance2 = await provider.getBalance(dxSwapDeployer.address)
-    console.log('balance2', ethers.utils.formatEther(balance2))
+    console.log('balance contract after', ethers.utils.formatEther(balance2))
 
     expect(await dxSwapDeployer.state()).to.eq(1)
 

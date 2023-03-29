@@ -60,6 +60,7 @@
     "test": "yarn compile && hardhat test",
     "t": "NODE_ENV=test yarn hardhat test",
     "t:1": "NODE_ENV=test yarn hardhat test test/zkDXswapDeployer.spec.ts --bail",
+    "p:1": "NODE_ENV=test pnpm hardhat test test/zkDXswapDeployer.spec.ts --bail",
     "test:coverage": "hardhat coverage",
     "test:gasreport": "GAS_REPORT_ENABLED=true hardhat test",
     "prepublishOnly": "yarn test",
