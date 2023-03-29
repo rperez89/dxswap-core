@@ -1,22 +1,13 @@
 import '@nomiclabs/hardhat-ethers'
-import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { expect } from 'chai'
-import { ethers, network } from 'hardhat'
+import { ethers } from 'hardhat'
 import { expandTo18Decimals } from './shared/utilities'
-import {
-  DXswapDeployer__factory,
-  DXswapFactory__factory,
-  DXswapPair__factory,
-  ERC20,
-  ERC20__factory,
-  WETH9__factory,
-} from '../typechain'
-import { defaultAbiCoder } from 'ethers/lib/utils'
+import { DXswapDeployer__factory } from '../typechain'
 import * as hre from 'hardhat'
 import { Deployer } from '@matterlabs/hardhat-zksync-deploy'
 
-import { Wallet, Provider, ContractFactory } from 'zksync-web3'
-import { getDeploymentConfig, contractConstructorArgs } from '../deploy/deployment.config'
+import { Wallet, Provider } from 'zksync-web3'
+import { contractConstructorArgs } from '../deploy/deployment.config'
 const overrides = {
   gasLimit: 29999999,
 }

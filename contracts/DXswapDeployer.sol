@@ -81,7 +81,6 @@ contract DXswapDeployer {
         dxSwapFactory.setFeeToSetter(address(dxSwapFeeSetter));
         state = 2;
         withdrawCall();
-        // msg.sender.transfer(address(this).balance);
     }
 
     // //function to withdraw all ETH from the contract
@@ -104,9 +103,4 @@ contract DXswapDeployer {
             emit TransferFailure();
         }
     }
-
-    // function withdrawTransfer() external {
-    //     address payable to = payable(msg.sender);
-    //     to.transfer(10 ether);
-    // }
 }
