@@ -50,6 +50,9 @@ const deploymentConfig: { [k: string]: PeripheryDeployParams } = {
   },
   zkSyncTestnet: {
     nativeCurrencyWrapper: '0x20b28B1e4665FFf290650586ad76E977EAb90c5D',
+    dxSwapFactory: '0x7bdaE906De46653e551A606Dc527a2Ac3BBa830e',
+    dxSwapFeeReceiver: '0x34478088fF91fca4F4741D185B1B04429C354f7c',
+    dxSwapFeeSetter: '0xE688B8E322738f798F38E2C96eEA6E86183341Fe',
   },
 }
 

@@ -34,11 +34,12 @@ const deployment: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   console.log(`${artifact.contractName} was deployed to ${deployResult.address}`)
 
   const contractFullyQualifedName = `contracts/${contractName}.sol:${contractName}`
-  await hre.run('verify:verify', {
+  const result = await hre.run('verify:verify', {
     address: deployResult.address,
     contract: contractFullyQualifedName,
     constructorArguments: deployArgs,
   })
+  console.log('verification result ', result)
 }
 
 deployment.tags = [TAGS.DEPLOYER, TAGS.CORE_CONTRACTS]
