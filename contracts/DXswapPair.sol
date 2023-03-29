@@ -1,6 +1,9 @@
-pragma solidity =0.5.16;
+// SPDX-License-Identifier: AGPL-3.0-only
+
+pragma solidity ^0.8.0;
 
 import './interfaces/IDXswapPair.sol';
+import './interfaces/IDXswapERC20.sol';
 import './DXswapERC20.sol';
 import './libraries/Math.sol';
 import './libraries/UQ112x112.sol';
@@ -8,14 +11,79 @@ import './interfaces/IERC20.sol';
 import './interfaces/IDXswapFactory.sol';
 import './interfaces/IDXswapCallee.sol';
 
-contract DXswapPair is IDXswapPair, DXswapERC20 {
+contract DXswapPair is DXswapERC20, IDXswapPair {
     using SafeMath for uint;
     using UQ112x112 for uint224;
+
+    // function DOMAIN_SEPARATOR() external view override(DXswapERC20, IDXswapERC20) returns (bytes32) {
+    //     return DXswapERC20.DOMAIN_SEPARATOR;
+    // }
+
+    // function PERMIT_TYPEHASH() external pure override(DXswapERC20, IDXswapERC20) returns (bytes32) {
+    //     return DXswapERC20.PERMIT_TYPEHASH;
+    // }
+
+    // function allowance(
+    //     address owner,
+    //     address spender
+    // ) external view override(IDXswapPair, IDXswapERC20) returns (uint256) {
+    //     return IDXswapPair.allowance(owner, spender);
+    // }
+
+    // function approve(address spender, uint256 value) external override(DXswapERC20, IDXswapERC20) returns (bool) {
+    //     return DXswapERC20.approve(spender, value);
+    // }
+
+    // function transfer(address to, uint256 value) external override(DXswapERC20, IDXswapERC20) returns (bool) {
+    //     return DXswapERC20.transfer(to, value);
+    // }
+
+    // function name() external view override(DXswapERC20, IDXswapERC20) returns (string memory) {
+    //     return 'Ota';
+    // }
+
+    // function symbol() external view override(DXswapERC20, IDXswapERC20) returns (string memory) {
+    //     return 'Ota';
+    // }
+
+    // function decimals() external view override(DXswapERC20, IDXswapERC20) returns (uint8) {
+    //     return 18;
+    // }
+
+    // function totalSupply() external view override(DXswapERC20, IDXswapERC20) returns (uint256) {
+    //     return 100000000000000000000000000;
+    // }
+
+    // function balanceOf(address owner) external view override(DXswapERC20, IDXswapERC20) returns (uint256) {}
+
+    // function transferFrom(address from, address to, uint256 value) external returns (bool);
+
+    // function nonces(address owner) external view override(DXswapERC20, IDXswapERC20) returns (uint256) {
+    //     return DXswapERC20.nonces(owner);
+    // }
+
+    // function permit(
+    //     address owner,
+    //     address spender,
+    //     uint256 value,
+    //     uint256 deadline,
+    //     uint8 v,
+    //     bytes32 r,
+    //     bytes32 s
+    // ) external {}
+
+    // function transferFrom(
+    //     address from,
+    //     address to,
+    //     uint256 value
+    // ) external override(DXswapERC20, IDXswapERC20) returns (bool) {
+    //     return DXswapERC20.transferFrom(from, to, value);
+    // }
 
     uint public constant MINIMUM_LIQUIDITY = 10 ** 3;
     bytes4 private constant SELECTOR = bytes4(keccak256(bytes('transfer(address,uint256)')));
 
-    address public factory;
+    address public immutable factory;
     address public token0;
     address public token1;
 
@@ -47,19 +115,7 @@ contract DXswapPair is IDXswapPair, DXswapERC20 {
         require(success && (data.length == 0 || abi.decode(data, (bool))), 'DXswapPair: TRANSFER_FAILED');
     }
 
-    event Mint(address indexed sender, uint amount0, uint amount1);
-    event Burn(address indexed sender, uint amount0, uint amount1, address indexed to);
-    event Swap(
-        address indexed sender,
-        uint amount0In,
-        uint amount1In,
-        uint amount0Out,
-        uint amount1Out,
-        address indexed to
-    );
-    event Sync(uint112 reserve0, uint112 reserve1);
-
-    constructor() public {
+    constructor() {
         factory = msg.sender;
     }
 
@@ -79,7 +135,7 @@ contract DXswapPair is IDXswapPair, DXswapERC20 {
 
     // update reserves and, on the first call per block, price accumulators
     function _update(uint balance0, uint balance1, uint112 _reserve0, uint112 _reserve1) private {
-        require(balance0 <= uint112(-1) && balance1 <= uint112(-1), 'DXswapPair: OVERFLOW');
+        require(balance0 <= type(uint112).max && balance1 <= type(uint112).max, 'DXswapPair: OVERFLOW');
         uint32 blockTimestamp = uint32(block.timestamp % 2 ** 32);
         uint32 timeElapsed = blockTimestamp - blockTimestampLast; // overflow is desired
         if (timeElapsed > 0 && _reserve0 != 0 && _reserve1 != 0) {
@@ -147,7 +203,6 @@ contract DXswapPair is IDXswapPair, DXswapERC20 {
         uint balance0 = IERC20(_token0).balanceOf(address(this));
         uint balance1 = IERC20(_token1).balanceOf(address(this));
         uint liquidity = balanceOf[address(this)];
-
         bool feeOn = _mintFee(_reserve0, _reserve1);
         uint _totalSupply = totalSupply; // gas savings, must be defined here since totalSupply can update in _mintFee
         amount0 = liquidity.mul(balance0) / _totalSupply; // using balances ensures pro-rata distribution
@@ -169,7 +224,6 @@ contract DXswapPair is IDXswapPair, DXswapERC20 {
         require(amount0Out > 0 || amount1Out > 0, 'DXswapPair: INSUFFICIENT_OUTPUT_AMOUNT');
         (uint112 _reserve0, uint112 _reserve1, ) = getReserves(); // gas savings
         require(amount0Out < _reserve0 && amount1Out < _reserve1, 'DXswapPair: INSUFFICIENT_LIQUIDITY');
-
         uint balance0;
         uint balance1;
         {
@@ -183,8 +237,11 @@ contract DXswapPair is IDXswapPair, DXswapERC20 {
             balance0 = IERC20(_token0).balanceOf(address(this));
             balance1 = IERC20(_token1).balanceOf(address(this));
         }
+
         uint amount0In = balance0 > _reserve0 - amount0Out ? balance0 - (_reserve0 - amount0Out) : 0;
+
         uint amount1In = balance1 > _reserve1 - amount1Out ? balance1 - (_reserve1 - amount1Out) : 0;
+
         require(amount0In > 0 || amount1In > 0, 'DXswapPair: INSUFFICIENT_INPUT_AMOUNT');
         {
             // scope for reserve{0,1}Adjusted, avoids stack too deep errors
