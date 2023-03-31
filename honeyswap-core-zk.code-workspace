@@ -1,0 +1,15 @@
+{
+	"folders": [
+		{
+			"name": "Hardhat",
+			"path": "."
+		},
+		{
+			"name": "ZkNode",
+			"path": "./local-setup"
+		}
+	],
+	"settings": {
+		"solidity.formatter": "none"
+	}
+}

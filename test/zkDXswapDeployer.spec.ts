@@ -53,8 +53,8 @@ describe('DXswapDeployer', () => {
     console.log('deployArgs', deployArgs)
 
     const contractName = 'DXswapDeployer'
-    const dxSwapDeployer = await deployer.deploy(artifact, deployArgs)
-    console.log('dxSwapDeployer', dxSwapDeployer)
+    const dxSwapDeployer = await deployer.deploy(artifact, deployArgs, { gasLimit: 1_000_000 })
+    // console.log('dxSwapDeployer', dxSwapDeployer)
 
     // console.log(`${artifact.contractName} was deployed to ${deployResult.address}`)
 
