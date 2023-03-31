@@ -48,7 +48,7 @@ contract DXswapFeeReceiver {
     
     // Helper function to know if an address is a contract, extcodesize returns the size of the code of a smart
     //  contract in a specific address
-    function isContract(address addr) internal returns (bool) {
+    function isContract(address addr) internal view returns (bool) {
         uint size;
         assembly { size := extcodesize(addr) }
         return size > 0;
