@@ -10,7 +10,9 @@
 		}
 	],
 	"settings": {
-		"solidity.formatter": "none"
+		"solidity.formatter": "forge",
+		"solidity.packageDefaultDependenciesContractsDirectory": "src",
+		"solidity.packageDefaultDependenciesDirectory": "lib"
 	},
 	"extensions": {
 		"recommendations": [
@@ -23,7 +25,8 @@
 			"esbenp.prettier-vscode",
 			"mhutchie.git-graph",
 			"donjayamanne.githistory",
-			"eamodio.gitlens"
+			"eamodio.gitlens",
+			"juanblanco.solidity"
 		]
 	}
 }
