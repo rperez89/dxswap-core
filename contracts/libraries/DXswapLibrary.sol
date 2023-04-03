@@ -1,6 +1,8 @@
-pragma solidity >=0.5.0;
+// SPDX-License-Identifier: AGPL-3.0-or-later
+pragma solidity ^0.8.0;
 
 import '../interfaces/IDXswapPair.sol';
+import '../DXswapPair.sol';
 
 import "./SafeMath.sol";
 
@@ -17,12 +19,12 @@ library DXswapLibrary {
     // calculates the CREATE2 address for a pair without making any external calls
     function pairFor(address factory, address tokenA, address tokenB) internal pure returns (address pair) {
         (address token0, address token1) = sortTokens(tokenA, tokenB);
-        pair = address(uint(keccak256(abi.encodePacked(
+        pair = address(uint160(uint(keccak256(abi.encodePacked(
             hex'ff',
             factory,
             keccak256(abi.encodePacked(token0, token1)),
-            hex'c30284a6e09f4f63686442b7046014b946fdb3e6c00d48b549eda87070a98167' // init code hash
-        ))));
+            keccak256(abi.encodePacked(type(DXswapPair).creationCode)) // @TODO try generate the hash instead hex'c30284a6e09f4f63686442b7046014b946fdb3e6c00d48b549eda87070a98167' // init code hash
+        )))));
     }
 
     // fetches and sorts the reserves for a pair
@@ -34,7 +36,7 @@ library DXswapLibrary {
     
     // fetches and sorts the reserves for a pair
     function getSwapFee(address factory, address tokenA, address tokenB) internal view returns (uint swapFee) {
-        (address token0,) = sortTokens(tokenA, tokenB);
+        (address token0,) = sortTokens(tokenA, tokenB); // @audit - unused variable
         swapFee = IDXswapPair(pairFor(factory, tokenA, tokenB)).swapFee();
     }
 

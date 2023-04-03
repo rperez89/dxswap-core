@@ -83,16 +83,6 @@ contract DXswapDeployer {
         withdrawCall();
     }
 
-    // //function to withdraw all ETH from the contract
-    // function withdrawSend() external {
-    //     bool success = payable(msg.sender).send(10 ether);
-    //     if (success) {
-    //         emit TransferSuccess();
-    //     } else {
-    //         emit TransferFailure();
-    //     }
-    // }
-
     function withdrawCall() public {
         uint value = address(this).balance;
         address payable to = payable(msg.sender);

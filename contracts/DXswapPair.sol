@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: AGPL-3.0-only
+// SPDX-License-Identifier: AGPL-3.0-or-later
 
 pragma solidity ^0.8.0;
 
@@ -14,71 +14,6 @@ import './interfaces/IDXswapCallee.sol';
 contract DXswapPair is DXswapERC20, IDXswapPair {
     using SafeMath for uint;
     using UQ112x112 for uint224;
-
-    // function DOMAIN_SEPARATOR() external view override(DXswapERC20, IDXswapERC20) returns (bytes32) {
-    //     return DXswapERC20.DOMAIN_SEPARATOR;
-    // }
-
-    // function PERMIT_TYPEHASH() external pure override(DXswapERC20, IDXswapERC20) returns (bytes32) {
-    //     return DXswapERC20.PERMIT_TYPEHASH;
-    // }
-
-    // function allowance(
-    //     address owner,
-    //     address spender
-    // ) external view override(IDXswapPair, IDXswapERC20) returns (uint256) {
-    //     return IDXswapPair.allowance(owner, spender);
-    // }
-
-    // function approve(address spender, uint256 value) external override(DXswapERC20, IDXswapERC20) returns (bool) {
-    //     return DXswapERC20.approve(spender, value);
-    // }
-
-    // function transfer(address to, uint256 value) external override(DXswapERC20, IDXswapERC20) returns (bool) {
-    //     return DXswapERC20.transfer(to, value);
-    // }
-
-    // function name() external view override(DXswapERC20, IDXswapERC20) returns (string memory) {
-    //     return 'Ota';
-    // }
-
-    // function symbol() external view override(DXswapERC20, IDXswapERC20) returns (string memory) {
-    //     return 'Ota';
-    // }
-
-    // function decimals() external view override(DXswapERC20, IDXswapERC20) returns (uint8) {
-    //     return 18;
-    // }
-
-    // function totalSupply() external view override(DXswapERC20, IDXswapERC20) returns (uint256) {
-    //     return 100000000000000000000000000;
-    // }
-
-    // function balanceOf(address owner) external view override(DXswapERC20, IDXswapERC20) returns (uint256) {}
-
-    // function transferFrom(address from, address to, uint256 value) external returns (bool);
-
-    // function nonces(address owner) external view override(DXswapERC20, IDXswapERC20) returns (uint256) {
-    //     return DXswapERC20.nonces(owner);
-    // }
-
-    // function permit(
-    //     address owner,
-    //     address spender,
-    //     uint256 value,
-    //     uint256 deadline,
-    //     uint8 v,
-    //     bytes32 r,
-    //     bytes32 s
-    // ) external {}
-
-    // function transferFrom(
-    //     address from,
-    //     address to,
-    //     uint256 value
-    // ) external override(DXswapERC20, IDXswapERC20) returns (bool) {
-    //     return DXswapERC20.transferFrom(from, to, value);
-    // }
 
     uint public constant MINIMUM_LIQUIDITY = 10 ** 3;
     bytes4 private constant SELECTOR = bytes4(keccak256(bytes('transfer(address,uint256)')));

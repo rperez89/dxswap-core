@@ -1,6 +1,7 @@
-pragma solidity =0.6.6;
+// SPDX-License-Identifier: AGPL-3.0-or-later
+pragma solidity ^0.8.0;
 
-import '@swapr/core/contracts/interfaces/IDXswapFactory.sol';
+import './interfaces/IDXswapFactory.sol';
 
 import './libraries/TransferHelper.sol';
 import './interfaces/IDXswapRouter.sol';
@@ -20,13 +21,13 @@ contract DXswapRouter is IDXswapRouter {
         _;
     }
 
-    constructor(address _factory, address _WETH) public {
+    constructor(address _factory, address _WETH) {
         factory = _factory;
         WETH = _WETH;
     }
 
     receive() external payable {
-        assert(msg.sender == WETH); // only accept ETH via fallback from the WETH contract
+        require(msg.sender == WETH, "DXswapRouter: Invalid sender"); // only accept ETH via fallback from the WETH contract
     }
 
     // **** ADD LIQUIDITY ****
@@ -149,7 +150,7 @@ contract DXswapRouter is IDXswapRouter {
         bool approveMax, uint8 v, bytes32 r, bytes32 s
     ) external virtual override returns (uint amountA, uint amountB) {
         address pair = DXswapLibrary.pairFor(factory, tokenA, tokenB);
-        uint value = approveMax ? uint(-1) : liquidity;
+        uint value = approveMax ? type(uint256).max : liquidity;
         IDXswapPair(pair).permit(msg.sender, address(this), value, deadline, v, r, s);
         (amountA, amountB) = removeLiquidity(tokenA, tokenB, liquidity, amountAMin, amountBMin, to, deadline);
     }
@@ -163,7 +164,7 @@ contract DXswapRouter is IDXswapRouter {
         bool approveMax, uint8 v, bytes32 r, bytes32 s
     ) external virtual override returns (uint amountToken, uint amountETH) {
         address pair = DXswapLibrary.pairFor(factory, token, WETH);
-        uint value = approveMax ? uint(-1) : liquidity;
+        uint value = approveMax ? type(uint256).max : liquidity;
         IDXswapPair(pair).permit(msg.sender, address(this), value, deadline, v, r, s);
         (amountToken, amountETH) = removeLiquidityETH(token, liquidity, amountTokenMin, amountETHMin, to, deadline);
     }
@@ -200,7 +201,7 @@ contract DXswapRouter is IDXswapRouter {
         bool approveMax, uint8 v, bytes32 r, bytes32 s
     ) external virtual override returns (uint amountETH) {
         address pair = DXswapLibrary.pairFor(factory, token, WETH);
-        uint value = approveMax ? uint(-1) : liquidity;
+        uint value = approveMax ? type(uint256).max : liquidity;
         IDXswapPair(pair).permit(msg.sender, address(this), value, deadline, v, r, s);
         amountETH = removeLiquidityETHSupportingFeeOnTransferTokens(
             token, liquidity, amountTokenMin, amountETHMin, to, deadline
