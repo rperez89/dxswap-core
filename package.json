@@ -7,7 +7,7 @@
     ".contracts.json"
   ],
   "engines": {
-    "node": ">=10"
+    "node": ">=12"
   },
   "dependencies": {},
   "devDependencies": {
