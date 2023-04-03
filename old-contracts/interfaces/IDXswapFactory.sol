@@ -1,8 +1,7 @@
-// SPDX-License-Identifier: AGPL-3.0-or-later
-pragma solidity ^0.8.0;
+pragma solidity >=0.5.0;
 
 interface IDXswapFactory {
-    event PairCreated(address indexed token0, address indexed token1, address pair, uint);
+    event PairCreated(address indexed token0, address indexed token1, address pair, uint256);
 
     function INIT_CODE_PAIR_HASH() external pure returns (bytes32);
     function feeTo() external view returns (address);

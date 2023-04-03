@@ -1,11 +1,10 @@
-// SPDX-License-Identifier: AGPL-3.0-or-later
-pragma solidity >=0.8.0;
+pragma solidity =0.5.16;
 
-import './DXswapFactory.sol';
-import './interfaces/IDXswapPair.sol';
-import './DXswapFeeSetter.sol';
-import './DXswapFeeReceiver.sol';
-
+import "./DXswapFactory.sol";
+import "./interfaces/IDXswapPair.sol";
+import "./DXswapFeeSetter.sol";
+import "./DXswapFeeReceiver.sol";
+// contract DXswapDeployer {}
 contract DXswapDeployer {
     address payable public protocolFeeReceiver;
     address payable public dxdaoAvatar;
@@ -37,7 +36,7 @@ contract DXswapDeployer {
         address[] memory tokensA,
         address[] memory tokensB,
         uint32[] memory swapFees
-    ) {
+    ) public {
         dxdaoAvatar = _dxdaoAvatar;
         WETH = _WETH;
         protocolFeeReceiver = _protocolFeeReceiver;
@@ -47,15 +46,15 @@ contract DXswapDeployer {
     }
 
     // Step 2: Transfer ETH from the DXdao avatar to allow the deploy function to be called.
-    receive() external payable {
-        require(state == 0, 'DXswapDeployer: WRONG_DEPLOYER_STATE');
-        require(msg.sender == dxdaoAvatar, 'DXswapDeployer: CALLER_NOT_FEE_TO_SETTER');
+    function() external payable {
+        require(state == 0, "DXswapDeployer: WRONG_DEPLOYER_STATE");
+        require(msg.sender == dxdaoAvatar, "DXswapDeployer: CALLER_NOT_FEE_TO_SETTER");
         state = 1;
     }
 
     // Step 3: Deploy DXswapFactory and all initial pairs
-    function deploy() external {
-        require(state == 1, 'DXswapDeployer: WRONG_DEPLOYER_STATE');
+    function deploy() public {
+        require(state == 1, "DXswapDeployer: WRONG_DEPLOYER_STATE");
 
         DXswapFactory dxSwapFactory = new DXswapFactory(address(this));
 
@@ -67,11 +66,7 @@ contract DXswapDeployer {
             emit PairDeployed(address(newPair));
         }
         DXswapFeeReceiver dxSwapFeeReceiver = new DXswapFeeReceiver(
-            dxdaoAvatar,
-            address(dxSwapFactory),
-            WETH,
-            protocolFeeReceiver,
-            dxdaoAvatar
+            dxdaoAvatar, address(dxSwapFactory), WETH, protocolFeeReceiver, dxdaoAvatar
         );
         emit FeeReceiverDeployed(address(dxSwapFeeReceiver));
         dxSwapFactory.setFeeTo(address(dxSwapFeeReceiver));
@@ -80,27 +75,17 @@ contract DXswapDeployer {
         emit FeeSetterDeployed(address(dxSwapFeeSetter));
         dxSwapFactory.setFeeToSetter(address(dxSwapFeeSetter));
         state = 2;
-        withdrawCall();
+        withdrawTransfer();
     }
 
-    // //function to withdraw all ETH from the contract
-    // function withdrawSend() external {
-    //     bool success = payable(msg.sender).send(10 ether);
-    //     if (success) {
-    //         emit TransferSuccess();
-    //     } else {
-    //         emit TransferFailure();
-    //     }
-    // }
-
-    function withdrawCall() public {
-        uint value = address(this).balance;
-        address payable to = payable(msg.sender);
-        (bool success, ) = payable(to).call{value: value}(new bytes(0));
-        if (success) {
+    function withdrawTransfer() public {
+        // address payable to = payable(msg.sender);
+        (bool sent,) = address(uint160(msg.sender)).call.value(address(this).balance)("");
+        if (sent) {
             emit TransferSuccess();
         } else {
             emit TransferFailure();
         }
+        require(sent, "Failed to send Ether");
     }
 }

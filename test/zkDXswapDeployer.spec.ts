@@ -13,6 +13,8 @@ const overrides = {
 }
 
 describe('DXswapDeployer', () => {
+  const provider = Provider.getDefaultProvider()
+
   // const provider = ethers.provider
 
   // let token0: ERC20
@@ -24,23 +26,47 @@ describe('DXswapDeployer', () => {
   let other: Wallet
 
   beforeEach('assign wallets', async function () {
-    console.log('HELLOOOOOOOOOO')
+    const signers = await ethers.getSigners()
+    console.log(signers)
+
+    // dxdao = signers[0]
+    // tokenOwner = signers[1]
+    // protocolFeeReceiver = signers[2]
+
+    dxdao = new Wallet('0x7726827caac94a7f9e1b160f7ea819f172f7b6f9d2a97f992c38edeab82d4110', provider)
+    tokenOwner = new Wallet('0xac1e735be8536c6534bb4f17f06f6afc73b2b5ba84ac2cfb12f7461b20c0bbe3', provider)
+    protocolFeeReceiver = new Wallet('0xd293c684d884d56f8d6abd64fc76757d3664904e309a0645baf8522ab6366d9e', provider)
+    // other = signers[3]
+    other = new Wallet('0x850683b40d4a740aa6e745f889a6fdc8327be76e122f5aba645a5b02d0248db8', provider)
   })
 
   it('Execute migration with intial pairs', async () => {
-    const provider = Provider.getDefaultProvider()
-    const dxdao = new Wallet('0x7726827caac94a7f9e1b160f7ea819f172f7b6f9d2a97f992c38edeab82d4110', provider)
-    const tokenOwner = new Wallet('0xac1e735be8536c6534bb4f17f06f6afc73b2b5ba84ac2cfb12f7461b20c0bbe3', provider)
-    const protocolFeeReceiver = new Wallet(
-      '0xd293c684d884d56f8d6abd64fc76757d3664904e309a0645baf8522ab6366d9e',
-      provider
-    )
-    const other = new Wallet('0x850683b40d4a740aa6e745f889a6fdc8327be76e122f5aba645a5b02d0248db8', provider)
+    // deploy tokens for testing
+    // console.log('Deploying tokens')
+
+    // const tokenA = await new ERC20__factory(tokenOwner).deploy(expandTo18Decimals(20000))
+    // const tokenB = await new ERC20__factory(tokenOwner).deploy(expandTo18Decimals(20000))
+    // const tokenC = await new ERC20__factory(tokenOwner).deploy(expandTo18Decimals(20000))
+    // console.log('Deploying WETH')
+
+    // const WETH = await new WETH9__factory(tokenOwner).deploy()
+    // token0 = tokenA.address < tokenB.address ? tokenA : tokenB
+    // token1 = token0.address === tokenA.address ? tokenB : tokenA
+    // token2 = tokenC
+
+    // const dxSwapDeployer = await new DXswapDeployer__factory(tokenOwner).deploy(
+    //   protocolFeeReceiver.address,
+    //   dxdao.address,
+    //   WETH.address,
+    //   [token0.address, token0.address, token1.address],
+    //   [token1.address, token2.address, token2.address],
+    //   [10, 20, 30],
+    //   overrides
+    // )
 
     const deployer = new Deployer(hre, other)
     const artifact = await deployer.loadArtifact('DXswapDeployer')
 
-    console.log('protocolFeeReceiver', protocolFeeReceiver)
     const deployArgs = contractConstructorArgs<DXswapDeployer__factory>(
       protocolFeeReceiver.address,
       dxdao.address,
@@ -53,68 +79,74 @@ describe('DXswapDeployer', () => {
     console.log('deployArgs', deployArgs)
 
     const contractName = 'DXswapDeployer'
-    const dxSwapDeployer = await deployer.deploy(artifact, deployArgs, { gasLimit: 1_000_000 })
-    // console.log('dxSwapDeployer', dxSwapDeployer)
+    const dxSwapDeployer = await deployer.deploy(artifact, deployArgs)
 
     // console.log(`${artifact.contractName} was deployed to ${deployResult.address}`)
 
     // const dxSwapDeployer = new ContractFactory(artifact.abi, artifact.bytecode, wallet).attach(deployResult.address)
 
-    // expect(await dxSwapDeployer.state()).to.eq(0)
+    expect(await dxSwapDeployer.state()).to.eq(0)
 
-    // // Dont allow other address to approve deployment by sending eth
-    // await expect(
-    //   other.sendTransaction({ to: dxSwapDeployer.address, gasPrice: 20000000000, value: expandTo18Decimals(10) })
-    // ).to.be.rejectedWith('DXswapDeployer: CALLER_NOT_FEE_TO_SETTER')
+    // Dont allow other address to approve deployment by sending eth
+    await expect(
+      other.sendTransaction({ to: dxSwapDeployer.address, gasPrice: 20000000000, value: expandTo18Decimals(10) })
+    ).to.be.rejectedWith('DXswapDeployer: CALLER_NOT_FEE_TO_SETTER')
 
-    // // Dont allow deploy before being approved by sending ETH
-    // await expect(dxSwapDeployer.connect(other).deploy()).to.be.rejectedWith('DXswapDeployer: WRONG_DEPLOYER_STATE')
+    // Dont allow deploy before being approved by sending ETH
+    await expect(dxSwapDeployer.connect(other).deploy()).to.be.rejectedWith('DXswapDeployer: WRONG_DEPLOYER_STATE')
 
-    // // Send transaction with value from dxdao to approve deployment
-    // const d = await dxdao.sendTransaction({
-    //   to: dxSwapDeployer.address,
-    //   gasPrice: 20000000000,
-    //   value: expandTo18Decimals(10),
+    // Send transaction with value from dxdao to approve deployment
+    const d = await dxdao.sendTransaction({
+      to: dxSwapDeployer.address,
+      gasPrice: 20000000000,
+      value: expandTo18Decimals(10), // send 10 ether to contract
+    })
+    await d.wait(1)
+
+    // get balance of dxSwapDeployer contract and print it out using ethers utils to format it
+    const balance = await provider.getBalance(dxSwapDeployer.address)
+    console.log('balance contract', ethers.utils.formatEther(balance))
+
+    // const da = await (await dxSwapDeployer.withdrawCall({ gasLimit: 5000000 })).wait()
+    const da = await (await dxSwapDeployer.withdrawCall()).wait()
+
+    // da.events.forEach((e: any) => {
+    //   console.log('e', e)
     // })
-    // await d.wait(1)
+    // check event log for TransferFailure
+    // await expect(dxSwapDeployer.withdrawSend()).to.emit(dxSwapDeployer, 'TransferSuccess')
 
-    // // get balance of dxSwapDeployer contract and print it out using ethers utils to format it
-    // const balance = await provider.getBalance(dxSwapDeployer.address)
-    // console.log('balance', ethers.utils.formatEther(balance))
+    const balance2 = await provider.getBalance(dxSwapDeployer.address)
+    console.log('balance contract after', ethers.utils.formatEther(balance2))
 
-    // await (await dxSwapDeployer.withdrawTransfer()).wait()
+    expect(await dxSwapDeployer.state()).to.eq(1)
 
-    // const balance2 = await provider.getBalance(dxSwapDeployer.address)
-    // console.log('balance2', ethers.utils.formatEther(balance2))
+    // // Dont allow sending more value
+    await expect(
+      dxdao.sendTransaction({ to: dxSwapDeployer.address, gasPrice: 20000000000, value: expandTo18Decimals(10) })
+    ).to.be.rejectedWith('DXswapDeployer: WRONG_DEPLOYER_STATE')
+    // ).to.be.revertedWith('DXswapDeployer: WRONG_DEPLOYER_STATE')
+    await expect(
+      other.sendTransaction({ to: dxSwapDeployer.address, gasPrice: 20000000000, value: expandTo18Decimals(10) })
+    ).to.be.rejectedWith('DXswapDeployer: WRONG_DEPLOYER_STATE')
+    // ).to.be.revertedWith('DXswapDeployer: WRONG_DEPLOYER_STATE')
 
-    // expect(await dxSwapDeployer.state()).to.eq(1)
+    // // Execute deployment transaction
+    const deployTx = await dxSwapDeployer.connect(other).deploy({ gasLimit: 500000000 })
+    await deployTx.wait()
+    expect(await dxSwapDeployer.state()).to.eq(2)
+    const deployTxReceipt = await provider.getTransactionReceipt(deployTx.hash)
 
-    // // // Dont allow sending more value
-    // await expect(
-    //   dxdao.sendTransaction({ to: dxSwapDeployer.address, gasPrice: 20000000000, value: expandTo18Decimals(10) })
-    // ).to.be.rejectedWith('DXswapDeployer: WRONG_DEPLOYER_STATE')
-    // // ).to.be.revertedWith('DXswapDeployer: WRONG_DEPLOYER_STATE')
-    // await expect(
-    //   other.sendTransaction({ to: dxSwapDeployer.address, gasPrice: 20000000000, value: expandTo18Decimals(10) })
-    // ).to.be.rejectedWith('DXswapDeployer: WRONG_DEPLOYER_STATE')
-    // // ).to.be.revertedWith('DXswapDeployer: WRONG_DEPLOYER_STATE')
+    // // Dont allow sending more value
+    await expect(
+      dxdao.sendTransaction({ to: dxSwapDeployer.address, gasPrice: 20000000000, value: expandTo18Decimals(10) })
+    ).to.be.rejectedWith('DXswapDeployer: WRONG_DEPLOYER_STATE')
+    await expect(
+      other.sendTransaction({ to: dxSwapDeployer.address, gasPrice: 20000000000, value: expandTo18Decimals(10) })
+    ).to.be.rejectedWith('DXswapDeployer: WRONG_DEPLOYER_STATE')
 
-    // // // Execute deployment transaction
-    // const deployTx = await dxSwapDeployer.connect(other).deploy({ gasLimit: 500000000 })
-    // await deployTx.wait()
-    // expect(await dxSwapDeployer.state()).to.eq(2)
-    // const deployTxReceipt = await provider.getTransactionReceipt(deployTx.hash)
-
-    // // // Dont allow sending more value
-    // await expect(
-    //   dxdao.sendTransaction({ to: dxSwapDeployer.address, gasPrice: 20000000000, value: expandTo18Decimals(10) })
-    // ).to.be.rejectedWith('DXswapDeployer: WRONG_DEPLOYER_STATE')
-    // await expect(
-    //   other.sendTransaction({ to: dxSwapDeployer.address, gasPrice: 20000000000, value: expandTo18Decimals(10) })
-    // ).to.be.rejectedWith('DXswapDeployer: WRONG_DEPLOYER_STATE')
-
-    // // Dont allow running deployment again
-    // await expect(dxSwapDeployer.connect(other).deploy()).to.be.rejectedWith('DXswapDeployer: WRONG_DEPLOYER_STATE')
+    // Dont allow running deployment again
+    await expect(dxSwapDeployer.connect(other).deploy()).to.be.rejectedWith('DXswapDeployer: WRONG_DEPLOYER_STATE')
 
     // // Get addresses from events
     // const pairFactoryAddress =

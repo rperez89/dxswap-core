@@ -5,7 +5,6 @@ import '@nomiclabs/hardhat-ethers'
 import '@nomiclabs/hardhat-etherscan'
 import '@typechain/hardhat'
 import 'hardhat-dependency-compiler'
-import 'hardhat-deploy'
 import 'hardhat-gas-reporter'
 import 'solidity-coverage'
 import '@matterlabs/hardhat-zksync-deploy'
@@ -24,11 +23,13 @@ const zkSyncTestnet =
         ethNetwork: 'http://localhost:8545',
         // chainId: 270,
         zksync: true,
+        allowUnlimitedContractSize: true,
       }
     : {
         url: 'https://zksync2-testnet.zksync.dev',
         ethNetwork: 'goerli',
         zksync: true,
+        allowUnlimitedContractSize: true,
         // chainId: 280,
         verifyURL: 'https://zksync2-testnet-explorer.zksync.dev/contract_verification',
       }
@@ -45,23 +46,14 @@ const config: HardhatUserConfig = {
           },
         },
       },
-      {
-        version: '0.8.11',
-        settings: {
-          optimizer: {
-            enabled: true,
-            runs: 200,
-          },
-        },
-      },
     ],
   },
   paths: {
     artifacts: 'build/artifacts',
     cache: 'build/cache',
-    deploy: 'deploy',
+    // deploy: 'deploy',
     sources: 'contracts',
-    deployments: 'deployments',
+    // deployments: 'deployments',
   },
   defaultNetwork: 'zkSyncTestnet',
   networks: {
@@ -69,22 +61,22 @@ const config: HardhatUserConfig = {
       zksync: true,
     },
     mainnet: {
-      live: true,
-      saveDeployments: true,
+      // live: true,
+      // saveDeployments: true,
       url: `https://mainnet.infura.io/v3/${infuraKey}`,
       accounts,
       zksync: false,
     },
     gnosis: {
-      live: true,
-      saveDeployments: true,
+      // live: true,
+      // saveDeployments: true,
       url: 'https://rpc.gnosischain.com/',
       accounts,
       zksync: false,
     },
     rinkeby: {
-      live: false,
-      saveDeployments: true,
+      // live: false,
+      // saveDeployments: true,
       url: `https://rinkeby.infura.io/v3/${infuraKey}`,
       accounts,
       zksync: false,
@@ -95,11 +87,11 @@ const config: HardhatUserConfig = {
     outDir: 'typechain',
     target: 'ethers-v5',
   },
-  namedAccounts: {
-    deployer: 0,
-    account1: 1,
-    account2: 2,
-  },
+  // namedAccounts: {
+  //   deployer: 0,
+  //   account1: 1,
+  //   account2: 2,
+  // },
   gasReporter: {
     currency: 'USD',
     enabled: process.env.GAS_REPORT_ENABLED === 'true',
@@ -111,7 +103,7 @@ const config: HardhatUserConfig = {
     paths: ['./contracts/test'],
   },
   zksolc: {
-    version: '1.3.5',
+    version: '1.3.6',
     compilerSource: 'binary',
     settings: {},
   },

@@ -1,8 +1,6 @@
-// SPDX-License-Identifier: AGPL-3.0-or-later
+pragma solidity =0.5.16;
 
-pragma solidity >=0.8.0;
-
-// Helper methods for interacting with ERC20 tokens and sending ETH that do not consistently return true/false
+// helper methods for interacting with ERC20 tokens and sending ETH that do not consistently return true/false
 library TransferHelper {
     function safeApprove(address token, address to, uint value) internal {
         // bytes4(keccak256(bytes('approve(address,uint256)')));
@@ -23,7 +21,7 @@ library TransferHelper {
     }
 
     function safeTransferETH(address to, uint value) internal {
-        (bool success,) = to.call{value: value}(new bytes(0));
+        (bool success,) = to.call.value(value)(new bytes(0));
         require(success, 'TransferHelper: ETH_TRANSFER_FAILED');
     }
 }
