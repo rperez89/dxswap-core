@@ -6,7 +6,7 @@ import { DXswapDeployer__factory } from '../typechain'
 import * as hre from 'hardhat'
 import { Deployer } from '@matterlabs/hardhat-zksync-deploy'
 
-import { Wallet, Provider } from 'zksync-web3'
+import { Wallet, Provider, utils } from 'zksync-web3'
 import { contractConstructorArgs } from '../deploy/deployment.config'
 const overrides = {
   gasLimit: 29999999,
@@ -27,7 +27,6 @@ describe('DXswapDeployer', () => {
 
   beforeEach('assign wallets', async function () {
     const signers = await ethers.getSigners()
-    console.log(signers)
 
     // dxdao = signers[0]
     // tokenOwner = signers[1]
@@ -65,6 +64,16 @@ describe('DXswapDeployer', () => {
     // )
 
     const deployer = new Deployer(hre, other)
+
+    const depositAmount = ethers.utils.parseEther('1.001')
+    const depositHandle = await deployer.zkWallet.deposit({
+      to: deployer.zkWallet.address,
+      token: utils.ETH_ADDRESS,
+      amount: depositAmount,
+    })
+    // Wait until the deposit is processed on zkSync
+    await depositHandle.wait()
+
     const artifact = await deployer.loadArtifact('DXswapDeployer')
 
     const deployArgs = contractConstructorArgs<DXswapDeployer__factory>(
@@ -81,7 +90,7 @@ describe('DXswapDeployer', () => {
     const contractName = 'DXswapDeployer'
     const dxSwapDeployer = await deployer.deploy(artifact, deployArgs)
 
-    // console.log(`${artifact.contractName} was deployed to ${deployResult.address}`)
+    console.log(`${artifact.contractName} was deployed to ${dxSwapDeployer.address}`)
 
     // const dxSwapDeployer = new ContractFactory(artifact.abi, artifact.bytecode, wallet).attach(deployResult.address)
 

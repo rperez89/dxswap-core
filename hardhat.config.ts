@@ -22,14 +22,16 @@ const zkSyncTestnet =
     ? {
         url: 'http://localhost:3050',
         ethNetwork: 'http://localhost:8545',
-        // chainId: 270,
+        chainId: 270,
         zksync: true,
+        allowUnlimitedContractSize: true,
       }
     : {
         url: 'https://zksync2-testnet.zksync.dev',
         ethNetwork: 'goerli',
         zksync: true,
-        // chainId: 280,
+        allowUnlimitedContractSize: true,
+        chainId: 280,
         verifyURL: 'https://zksync2-testnet-explorer.zksync.dev/contract_verification',
       }
 
@@ -37,16 +39,7 @@ const config: HardhatUserConfig = {
   solidity: {
     compilers: [
       {
-        version: '0.5.16',
-        settings: {
-          optimizer: {
-            enabled: true,
-            runs: 200,
-          },
-        },
-      },
-      {
-        version: '0.8.11',
+        version: '0.8.16',
         settings: {
           optimizer: {
             enabled: true,
@@ -113,6 +106,7 @@ const config: HardhatUserConfig = {
   zksolc: {
     version: '1.3.5',
     compilerSource: 'binary',
+
     settings: {},
   },
 }
