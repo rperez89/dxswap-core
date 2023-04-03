@@ -11,5 +11,19 @@
 	],
 	"settings": {
 		"solidity.formatter": "none"
+	},
+	"extensions": {
+		"recommendations": [
+			"nomicfoundation.hardhat-solidity",
+			"tintinweb.vscode-solidity-flattener",
+			"tintinweb.solidity-visual-auditor",
+			"tintinweb.vscode-solidity-language",
+			"tintinweb.solidity-metrics",
+			"ackeeblockchain.tools-for-solidity",
+			"esbenp.prettier-vscode",
+			"mhutchie.git-graph",
+			"donjayamanne.githistory",
+			"eamodio.gitlens"
+		]
 	}
 }
