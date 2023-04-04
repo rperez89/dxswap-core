@@ -1,6 +1,5 @@
 import dotenv from 'dotenv'
 import { HardhatUserConfig } from 'hardhat/types'
-import '@nomicfoundation/hardhat-chai-matchers'
 import '@nomiclabs/hardhat-ethers'
 import '@nomiclabs/hardhat-etherscan'
 import '@typechain/hardhat'
@@ -11,6 +10,7 @@ import 'solidity-coverage'
 import '@matterlabs/hardhat-zksync-deploy'
 import '@matterlabs/hardhat-zksync-solc'
 import '@matterlabs/hardhat-zksync-verify'
+import '@matterlabs/hardhat-zksync-chai-matchers'
 
 dotenv.config()
 

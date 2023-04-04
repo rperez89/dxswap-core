@@ -4,6 +4,9 @@ devDependencies:
   '@ethersproject/providers':
     specifier: ^5.7.2
     version: 5.7.2
+  '@matterlabs/hardhat-zksync-chai-matchers':
+    specifier: ^0.1.2
+    version: 0.1.2(@nomicfoundation/hardhat-chai-matchers@1.0.6)
   '@matterlabs/hardhat-zksync-deploy':
     specifier: ^0.6.3
     version: 0.6.3(ethers@5.7.2)(hardhat@2.13.0)(zksync-web3@0.14.3)
@@ -541,6 +544,14 @@ packages:
 
   /@humanwhocodes/object-schema@1.2.1:
     resolution: {integrity: sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==}
+    dev: true
+
+  /@matterlabs/hardhat-zksync-chai-matchers@0.1.2(@nomicfoundation/hardhat-chai-matchers@1.0.6):
+    resolution: {integrity: sha512-lJWlVgnu4p0QvMucEdeVOWxCpPZogsygntN+RXLMS0R4PnqwslKHfG1ZbcgWRWQ7vgABqCCIF7d1GjieWdlFmQ==}
+    peerDependencies:
+      '@nomicfoundation/hardhat-chai-matchers': ~1.0.4
+    dependencies:
+      '@nomicfoundation/hardhat-chai-matchers': 1.0.6(@nomiclabs/hardhat-ethers@2.2.2)(chai@4.3.7)(ethers@5.7.2)(hardhat@2.13.0)
     dev: true
 
   /@matterlabs/hardhat-zksync-deploy@0.6.3(ethers@5.7.2)(hardhat@2.13.0)(zksync-web3@0.14.3):

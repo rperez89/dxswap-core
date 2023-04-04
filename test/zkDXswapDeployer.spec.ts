@@ -93,16 +93,14 @@ describe('DXswapDeployer', () => {
     console.log(`${artifact.contractName} was deployed to ${dxSwapDeployer.address}`)
 
     // const dxSwapDeployer = new ContractFactory(artifact.abi, artifact.bytecode, wallet).attach(deployResult.address)
-
     expect(await dxSwapDeployer.state()).to.eq(0)
-
     // Dont allow other address to approve deployment by sending eth
     await expect(
-      other.sendTransaction({ to: dxSwapDeployer.address, gasPrice: 20000000000, value: expandTo18Decimals(10) })
-    ).to.be.rejectedWith('DXswapDeployer: CALLER_NOT_FEE_TO_SETTER')
+      other.sendTransaction({ to: dxSwapDeployer.address, gasPrice: 20000000000, value: expandTo18Decimals(1) })
+    ).to.be.revertedWith('DXswapDeployer: CALLER_NOT_FEE_TO_SETTER')
 
     // Dont allow deploy before being approved by sending ETH
-    await expect(dxSwapDeployer.connect(other).deploy()).to.be.rejectedWith('DXswapDeployer: WRONG_DEPLOYER_STATE')
+    await expect(dxSwapDeployer.connect(other).deploy()).to.be.revertedWith('DXswapDeployer: WRONG_DEPLOYER_STATE')
 
     // Send transaction with value from dxdao to approve deployment
     const d = await dxdao.sendTransaction({
@@ -133,11 +131,11 @@ describe('DXswapDeployer', () => {
     // // Dont allow sending more value
     await expect(
       dxdao.sendTransaction({ to: dxSwapDeployer.address, gasPrice: 20000000000, value: expandTo18Decimals(10) })
-    ).to.be.rejectedWith('DXswapDeployer: WRONG_DEPLOYER_STATE')
+    ).to.be.revertedWith('DXswapDeployer: WRONG_DEPLOYER_STATE')
     // ).to.be.revertedWith('DXswapDeployer: WRONG_DEPLOYER_STATE')
     await expect(
       other.sendTransaction({ to: dxSwapDeployer.address, gasPrice: 20000000000, value: expandTo18Decimals(10) })
-    ).to.be.rejectedWith('DXswapDeployer: WRONG_DEPLOYER_STATE')
+    ).to.be.revertedWith('DXswapDeployer: WRONG_DEPLOYER_STATE')
     // ).to.be.revertedWith('DXswapDeployer: WRONG_DEPLOYER_STATE')
 
     // // Execute deployment transaction
@@ -149,13 +147,13 @@ describe('DXswapDeployer', () => {
     // // Dont allow sending more value
     await expect(
       dxdao.sendTransaction({ to: dxSwapDeployer.address, gasPrice: 20000000000, value: expandTo18Decimals(10) })
-    ).to.be.rejectedWith('DXswapDeployer: WRONG_DEPLOYER_STATE')
+    ).to.be.revertedWith('DXswapDeployer: WRONG_DEPLOYER_STATE')
     await expect(
       other.sendTransaction({ to: dxSwapDeployer.address, gasPrice: 20000000000, value: expandTo18Decimals(10) })
-    ).to.be.rejectedWith('DXswapDeployer: WRONG_DEPLOYER_STATE')
+    ).to.be.revertedWith('DXswapDeployer: WRONG_DEPLOYER_STATE')
 
     // Dont allow running deployment again
-    await expect(dxSwapDeployer.connect(other).deploy()).to.be.rejectedWith('DXswapDeployer: WRONG_DEPLOYER_STATE')
+    await expect(dxSwapDeployer.connect(other).deploy()).to.be.revertedWith('DXswapDeployer: WRONG_DEPLOYER_STATE')
 
     // // Get addresses from events
     // const pairFactoryAddress =
