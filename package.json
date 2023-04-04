@@ -57,7 +57,7 @@
     "precompile": "yarn clean",
     "compile": "hardhat compile",
     "compile:zk": "hardhat compile --network zkSyncTestnet",
-    "test": "yarn compile && hardhat test",
+    "test": "NODE_ENV=test yarn compile && hardhat test",
     "t": "NODE_ENV=test yarn hardhat test",
     "t:1": "NODE_ENV=test yarn hardhat test test/zkDXswapDeployer.spec.ts",
     "p:1": "NODE_ENV=test pnpm hardhat test test/zkDXswapDeployer.spec.ts",
