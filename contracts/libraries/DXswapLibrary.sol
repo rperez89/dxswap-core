@@ -48,7 +48,6 @@ library DXswapLibrary {
 
     // fetches and sorts the reserves for a pair
     function getSwapFee(address factory, address tokenA, address tokenB) internal view returns (uint256 swapFee) {
-        (address token0,) = sortTokens(tokenA, tokenB); // @audit - unused variable
         swapFee = IDXswapPair(pairFor(factory, tokenA, tokenB)).swapFee();
     }
 
