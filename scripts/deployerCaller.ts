@@ -1,6 +1,8 @@
 import * as zksync from 'zksync-web3'
 import * as ethers from 'ethers'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
+import contractsAddress from '../.contracts.json'
+import { DXswapDeployer__factory } from '../typechain'
 
 const account = process.env.PRIVATE_KEY || ''
 
@@ -12,31 +14,45 @@ async function main() {
   // Initialize the wallet.
   const zkSyncWallet = new zksync.Wallet(account, zkSyncProvider, ethProvider)
 
-  console.log('account ', account)
+  let deployerAddress: string | undefined = contractsAddress.zkSyncTestnet.deployer ?? undefined
+  deployerAddress = deployerAddress.trim() !== '' ? deployerAddress : undefined
 
-  const abi = [
-    {
-      inputs: [],
-      name: 'deploy',
-      outputs: [],
-      stateMutability: 'nonpayable',
-      type: 'function',
-    },
-  ]
-  const contractAddress = '0xB0A1D45189f3750DDB84de622579257D07eC3550'
-  const contract = new ethers.Contract(contractAddress, abi, zkSyncWallet)
+  if (!deployerAddress) {
+    throw new Error('Deployer address not found in .contracts.json')
+  }
 
-  const tx = await contract.populateTransaction.deploy()
-  const gasLimit = await contract.estimateGas.deploy()
-  const data = contract.interface.encodeFunctionData('deploy', [])
+  const contract = DXswapDeployer__factory.connect(deployerAddress, zkSyncWallet)
 
-  const result = await zkSyncWallet.sendTransaction({
-    to: contractAddress,
-    data: data,
-    gasLimit: gasLimit,
-  })
+  const allBalances = await zkSyncWallet.getAllBalances()
 
-  console.log('result', result)
+  console.log('allBalances', JSON.stringify(allBalances, null, 4))
+  // convert each Bignumber to number or string in allBalances using map
+  const allBalancesMap = new Map(Object.entries(allBalances).map(([key, value]) => [key, value.toString()]))
+  console.log('allBalancesMap', JSON.stringify(allBalancesMap, null, 4))
+
+  let state = await contract.state()
+
+  if (state == 0) {
+    const depositAmount = ethers.utils.parseEther('0.001')
+    const depositHandle = await zkSyncWallet.deposit({
+      to: contract.address,
+      token: zksync.utils.ETH_ADDRESS,
+      amount: depositAmount,
+    })
+    await depositHandle.wait(1) // waitFinalize() or waitL1Commit()
+  } else {
+    console.log('state', state)
+  }
+
+  state = await contract.state()
+  if (state == 1) {
+    const tx = await contract.deploy()
+    console.log('tx', JSON.stringify(tx, null, 4))
+    const receipt = await tx.wait(1)
+    console.log('receipt', JSON.stringify(receipt, null, 4))
+  } else {
+    console.log('state', state)
+  }
 }
 
 main().catch((error) => {
