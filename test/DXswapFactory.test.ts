@@ -84,9 +84,9 @@ describe('DXswapFactory', () => {
     // expect(await pair.token1()).to.eq(TEST_ADDRESSES[1])
   }
 
-  // it('createPair', async () => {
-  //   await createPair(TEST_ADDRESSES)
-  // })
+  it('createPair', async () => {
+    await createPair(TEST_ADDRESSES)
+  })
 
   // it('createPair:reverse', async () => {
   //   await createPair(TEST_ADDRESSES.slice().reverse() as [string, string])
