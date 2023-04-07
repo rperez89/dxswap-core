@@ -1,10 +1,14 @@
 import { expect } from 'chai'
 import { BigNumber, constants } from 'ethers'
+import { ethers } from 'hardhat'
 import { factoryFixture } from './shared/fixtures'
 import { DXswapFactory, DXswapFeeSetter, DXswapPair__factory } from './../typechain'
 import { bytecode as dxSwapPairBytecode } from '../build/artifacts-zk/contracts/DXswapPair.sol/DXswapPair.json'
 import { getCreate2Address } from './shared/utilities'
-import { Contract, Wallet, Provider } from 'zksync-web3'
+import { Contract, Wallet, Provider, utils } from 'zksync-web3'
+import { hexStripZeros } from 'ethers/lib/utils'
+
+const hre = require('hardhat')
 
 const { AddressZero } = constants
 
@@ -60,12 +64,17 @@ describe('DXswapFactory', () => {
 
   async function createPair(tokens: [string, string]) {
     const bytecode = dxSwapPairBytecode
+    //const pairArtifact = await hre.artifacts.readArtifact('DXswapPair')
     const create2Address = getCreate2Address(factory.address, tokens, bytecode)
-    console.log('create2Address ', create2Address)
+
+    console.log('create2Address', create2Address)
+
     const createPairTx = await factory.createPair(...tokens, overrides)
     await createPairTx.wait()
     const pairCreatedLogs = await factory.queryFilter(factory.filters.PairCreated(null, null, null, null))
-    console.log('pairCreatedLogs ', pairCreatedLogs)
+
+    console.log('LOGS ', pairCreatedLogs)
+
     await expect(createPairTx)
       .to.emit(factory, 'PairCreated')
       .withArgs(TEST_ADDRESSES[0], TEST_ADDRESSES[1], create2Address, BigNumber.from(1))
