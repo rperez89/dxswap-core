@@ -1,13 +1,15 @@
-pragma solidity =0.5.16;
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+pragma solidity ^0.8.0;
 
 import './interfaces/IDXswapFactory.sol';
 
 contract DXswapFeeSetter {
     address public owner;
     mapping(address => address) public pairOwners;
-    IDXswapFactory public factory;
+    IDXswapFactory public immutable factory;
   
-    constructor(address _owner, address _factory) public {
+    constructor(address _owner, address _factory) {
         owner = _owner;
         factory = IDXswapFactory(_factory);
     }
