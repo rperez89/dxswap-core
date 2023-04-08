@@ -23,8 +23,7 @@ contract FactoryTest is Test {
     }
 
     function testIfPair2() public {
-        bytes memory bytecode = type(DXswapPair).creationCode;
-        bytes32 bytecode256 = keccak256(abi.encodePacked(bytecode));
+        bytes32 bytecode256 = keccak256(abi.encodePacked(type(DXswapPair).creationCode));
         bytes32 salt = keccak256(
             abi.encodePacked(0x1000000000000000000000000000000000000000, 0x2000000000000000000000000000000000000000)
         );
@@ -32,15 +31,15 @@ contract FactoryTest is Test {
         console.logBytes32(salt);
     }
 
-    function testIfPair() public {
+    function testIfPairSameAddressWithSalt() public {
         IDXswapPair pair2 = IDXswapPair(
             factory.createPair(
                 address(0x1000000000000000000000000000000000000000), address(0x2000000000000000000000000000000000000000)
             )
         );
-        assertEq(address(pair2), address(0x546735AF283237F24cF3cF49BA0D3923C4234F0D));
         console.log(address(factory));
         console.log(address(pair2));
+        assertEq(address(pair2), address(0x546735AF283237F24cF3cF49BA0D3923C4234F0D));
     }
 
     function testIfPairCreated() public {

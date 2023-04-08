@@ -27,7 +27,7 @@ library DXswapLibrary {
                             hex"ff",
                             factory,
                             keccak256(abi.encodePacked(token0, token1)),
-                            keccak256(abi.encodePacked(type(DXswapPair).creationCode)) // @TODO try generate the hash instead hex'c30284a6e09f4f63686442b7046014b946fdb3e6c00d48b549eda87070a98167' // init code hash
+                            keccak256(abi.encodePacked(type(DXswapPair).creationCode))
                         )
                     )
                 )
