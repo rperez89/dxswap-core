@@ -68,6 +68,7 @@
     "deploy:mainnet": "hardhat deploy --network mainnet --tags CORE_CONTRACTS",
     "deploy:factory:zk": "hardhat deploy-zksync --script deploy/001_deploy_factory.ts   --network zkSyncTestnet",
     "deploy:router:zk": "hardhat deploy-zksync --script deploy/000_deploy_router.ts  --network zkSyncTestnet",
+    "deploy:token:zk": "hardhat deploy-zksync --script deploy/004_deploy_tokens_test.ts  --network zkSyncTestnet",
     "deployer:deploy": "hardhat run scripts/deployerCaller.ts",
     "verify:mainnet": "set -a; . ./.env; set +a; npx hardhat --network mainnet etherscan-verify --api-key \"$ETHERSCAN_KEY\"",
     "deploy:gnosis": "hardhat deploy --network gnosis --tags CORE_CONTRACTS",

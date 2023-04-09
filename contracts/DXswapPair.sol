@@ -33,6 +33,8 @@ contract DXswapPair is DXswapERC20, IDXswapPair {
 
     uint256 private unlocked = 1;
 
+    event SwapFeeChanged(uint32 newSwapFee, uint32 oldSwapFee);
+
     modifier lock() {
         require(unlocked == 1, "DXswapPair: LOCKED");
         unlocked = 0;
@@ -66,6 +68,11 @@ contract DXswapPair is DXswapERC20, IDXswapPair {
     function setSwapFee(uint32 _swapFee) external {
         require(msg.sender == factory, "DXswapPair: FORBIDDEN"); // sufficient check
         require(_swapFee <= 1000, "DXswapPair: FORBIDDEN_FEE"); // fee percentage check
+
+        if (swapFee != _swapFee) {
+            emit SwapFeeChanged(_swapFee, swapFee);
+        }
+
         swapFee = _swapFee;
     }
 
