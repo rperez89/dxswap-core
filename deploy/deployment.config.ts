@@ -54,6 +54,7 @@ const deploymentConfig: { [k: string]: PeripheryDeployParams } = {
     dxSwapFactory: contractAddress.zkSyncTestnet.deployer,
     dxSwapFeeReceiver: contractAddress.zkSyncTestnet.feeReceiver,
     dxSwapFeeSetter: contractAddress.zkSyncTestnet.feeSetter,
+    dxSwapRouter: contractAddress.zkSyncTestnet.router,
   },
 }
 
