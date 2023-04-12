@@ -54,10 +54,10 @@
     "feeSetter": "0x885B28d6B93087623483af5E5F7362BD6D8A0a6B"
   },
   "zkSyncTestnet": {
-    "deployer": "0x0000000000000000000000000000000000000000",
-    "factory": "0x7bdaE906De46653e551A606Dc527a2Ac3BBa830e",
-    "feeReceiver": "0x34478088fF91fca4F4741D185B1B04429C354f7c",
-    "feeSetter": "0xE688B8E322738f798F38E2C96eEA6E86183341Fe"
-    
+    "deployer": "0xaBB6bF5C0fCDe67d5248f6f3b99eE519E4D5aA7F",
+    "factory": "0xa76e90683102d4c6396a47cc18fa3bfe03a02869",
+    "feeReceiver": "0x35da18ab33789b024f6dc46ff589247e02b9a2f8",
+    "feeSetter": "0x11b1ca52e673d66dc7a3bd24878915f6f94ae880",
+    "router": "0x7c741b4746A9Ca5BEF36860d49Dc8cB449c21Bc3"
   }
 }

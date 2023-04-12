@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 pragma solidity >=0.8.0;
 
-import './DXswapFactory.sol';
-import './interfaces/IDXswapPair.sol';
-import './DXswapFeeSetter.sol';
-import './DXswapFeeReceiver.sol';
+import "./DXswapFactory.sol";
+import "./interfaces/IDXswapPair.sol";
+import "./DXswapFeeSetter.sol";
+import "./DXswapFeeReceiver.sol";
 
 contract DXswapDeployer {
     address payable public protocolFeeReceiver;
@@ -48,14 +48,14 @@ contract DXswapDeployer {
 
     // Step 2: Transfer ETH from the DXdao avatar to allow the deploy function to be called.
     receive() external payable {
-        require(state == 0, 'DXswapDeployer: WRONG_DEPLOYER_STATE');
-        require(msg.sender == dxdaoAvatar, 'DXswapDeployer: CALLER_NOT_FEE_TO_SETTER');
+        require(state == 0, "DXswapDeployer: WRONG_DEPLOYER_STATE");
+        require(msg.sender == dxdaoAvatar, "DXswapDeployer: CALLER_NOT_FEE_TO_SETTER");
         state = 1;
     }
 
     // Step 3: Deploy DXswapFactory and all initial pairs
     function deploy() external {
-        require(state == 1, 'DXswapDeployer: WRONG_DEPLOYER_STATE');
+        require(state == 1, "DXswapDeployer: WRONG_DEPLOYER_STATE");
 
         DXswapFactory dxSwapFactory = new DXswapFactory(address(this));
 
@@ -84,9 +84,9 @@ contract DXswapDeployer {
     }
 
     function withdrawCall() public {
-        uint value = address(this).balance;
+        uint256 value = address(this).balance;
         address payable to = payable(msg.sender);
-        (bool success, ) = payable(to).call{value: value}(new bytes(0));
+        (bool success,) = payable(to).call{value: value}(new bytes(0));
         if (success) {
             emit TransferSuccess();
         } else {

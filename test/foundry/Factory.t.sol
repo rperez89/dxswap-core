@@ -5,16 +5,15 @@ import "forge-std/Test.sol";
 import "forge-std/console.sol";
 
 import "contracts/DXswapFactory.sol";
+import {DXswapLibrary} from "contracts/libraries/DXswapLibrary.sol";
 import "contracts/test/ERC20.sol";
-import {UQ112x112} from "contracts/libraries/UQ112x112.sol";
 
 contract FactoryTest is Test {
     DXswapFactory public factory;
     ERC20 public token0;
     ERC20 public token1;
     IDXswapPair pair;
-
-    using UQ112x112 for uint224;
+    IDXswapPair pairReverted;
 
     function setUp() public {
         factory = new DXswapFactory(address(0));
@@ -23,40 +22,46 @@ contract FactoryTest is Test {
         pair = IDXswapPair(factory.createPair(address(token0), address(token1)));
     }
 
-    function testIncrement() public {
+    function testIfPair2() public {
+        bytes32 bytecode256 = keccak256(abi.encodePacked(type(DXswapPair).creationCode));
+        bytes32 salt = keccak256(
+            abi.encodePacked(0x1000000000000000000000000000000000000000, 0x2000000000000000000000000000000000000000)
+        );
+        console.logBytes32(bytecode256);
+        console.logBytes32(salt);
+    }
+
+    function testIfPairSameAddressWithSalt() public {
+        IDXswapPair pair2 = IDXswapPair(
+            factory.createPair(
+                address(0x1000000000000000000000000000000000000000), address(0x2000000000000000000000000000000000000000)
+            )
+        );
+        console.log(address(factory));
+        console.log(address(pair2));
+        assertEq(address(pair2), address(0x546735AF283237F24cF3cF49BA0D3923C4234F0D));
+    }
+
+    function testIfPairCreated() public {
         assertEq(factory.allPairsLength(), 1);
     }
 
-    function testCore() public {
-        uint32 blockTimestampLast = 1900;
-        uint256 balance0 = 0;
-        uint256 balance1 = 0;
+    function testIfInitHashCodeItsCorrect() public {
+        console.log(address(pair));
+        address pairAddress = DXswapLibrary.pairFor(address(factory), address(token0), address(token1));
+        console.log(pairAddress);
+        assertEq(address(pair), pairAddress);
+    }
 
-        uint112 reserve0 = 0;
-        uint112 reserve1 = 0;
-        require(balance0 <= type(uint112).max && balance1 <= type(uint112).max, "DXswapPair: OVERFLOW");
+    function testIfInitHashCodeItsInDiffOrder() public {
+        console.log(address(pair));
+        address pairAddress = DXswapLibrary.pairFor(address(factory), address(token1), address(token0));
+        console.log(pairAddress);
+        assertEq(address(pair), pairAddress);
+    }
 
-        uint112 _reserve0 = 1;
-        uint112 _reserve1 = 1;
-
-        uint256 price0CumulativeLast;
-        uint256 price1CumulativeLast;
-
-        vm.warp(1000);
-
-        uint32 blockTimestamp = uint32(block.timestamp % 2 ** 32);
-        uint32 timeElapsed = blockTimestamp - blockTimestampLast; // overflow is desired
-        console.log(timeElapsed);
-        if (timeElapsed > 0 && _reserve0 != 0 && _reserve1 != 0) {
-            console.log(timeElapsed);
-            // * never overflows, and + overflow is desired
-            price0CumulativeLast += uint256(UQ112x112.encode(_reserve1).uqdiv(_reserve0)) * timeElapsed;
-            price1CumulativeLast += uint256(UQ112x112.encode(_reserve0).uqdiv(_reserve1)) * timeElapsed;
-        }
-        reserve0 = uint112(balance0);
-        reserve1 = uint112(balance1);
-        blockTimestampLast = blockTimestamp;
-        // emit Sync(reserve0, reserve1);
-        console.log(reserve0, reserve1);
+    function testIfPairAlreadyExistTokenInverted() public {
+        vm.expectRevert("DXswapFactory: PAIR_EXISTS");
+        pairReverted = IDXswapPair(factory.createPair(address(token1), address(token0)));
     }
 }
