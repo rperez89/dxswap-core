@@ -62,6 +62,7 @@
     "t:1": "NODE_ENV=test yarn hardhat test test/zkDXswapDeployer.spec.ts",
     "p:1": "NODE_ENV=test pnpm hardhat test test/zkDXswapDeployer.spec.ts",
     "t:2": "NODE_ENV=test pnpm hardhat test test/DXswapFactory.spec.ts",
+    "t:3": "NODE_ENV=test pnpm hardhat test test/DXswapFeeReceiver.spec.ts",
     "test:coverage": "hardhat coverage",
     "test:gasreport": "GAS_REPORT_ENABLED=true hardhat test",
     "prepublishOnly": "yarn test",

@@ -89,32 +89,38 @@ export async function factoryFixture(
 }
 
 interface PairFixture extends FactoryFixture {
-  token0: ERC20
-  token1: ERC20
-  token2: ERC20
-  token3: ERC20
-  token4: ERC20
-  dxswapPair01: DXswapPair
-  dxswapPair23: DXswapPair
-  dxswapPair03: DXswapPair
-  dxswapPair24: DXswapPair
-  wethToken1Pair: DXswapPair
-  wethToken0Pair: DXswapPair
+  token0: Contract
+  token1: Contract
+  token2: Contract
+  token3: Contract
+  token4: Contract
+  dxswapPair01: Contract
+  dxswapPair23: Contract
+  dxswapPair03: Contract
+  dxswapPair24: Contract
+  wethToken1Pair: Contract
+  wethToken0Pair: Contract
 }
 
 export async function pairFixture(
   provider: JsonRpcProvider,
-  [dxdao, protocolFeeReceiver, fallbackReceiver]: SignerWithAddress[]
+  [dxdao, protocolFeeReceiver, fallbackReceiver]: Wallet[]
 ): Promise<PairFixture> {
+  const deployer = new Deployer(hre, dxdao)
+  const ercContractName = 'ERC20'
+  const artifact = await deployer.loadArtifact(ercContractName)
   // deploy tokens
-  const tokenA = await new ERC20__factory(dxdao).deploy(TOTAL_SUPPLY)
-  const tokenB = await new ERC20__factory(dxdao).deploy(TOTAL_SUPPLY)
-  const tokenC = await new ERC20__factory(dxdao).deploy(TOTAL_SUPPLY)
-  const tokenD = await new ERC20__factory(dxdao).deploy(TOTAL_SUPPLY)
-  const tokenE = await new ERC20__factory(dxdao).deploy(TOTAL_SUPPLY)
+  const tokenA = await deployer.deploy(artifact, [TOTAL_SUPPLY])
+  const tokenB = await deployer.deploy(artifact, [TOTAL_SUPPLY])
+  const tokenC = await deployer.deploy(artifact, [TOTAL_SUPPLY])
+  const tokenD = await deployer.deploy(artifact, [TOTAL_SUPPLY])
+  const tokenE = await deployer.deploy(artifact, [TOTAL_SUPPLY])
 
   // deploy weth
-  const WETH = await new WETH9__factory(dxdao).deploy()
+  const wethContractName = 'WETH9'
+  const wethArtifact = await deployer.loadArtifact(wethContractName)
+  // deploy weth
+  const WETH = await deployer.deploy(wethArtifact, [])
   await WETH.connect(dxdao).deposit({ value: expandTo18Decimals(100) })
 
   //sort tokens
@@ -125,69 +131,86 @@ export async function pairFixture(
   const token3 = token2.address === tokenC.address ? tokenD : tokenC
   const token4 = tokenE
 
-  const dxSwapDeployer = await new DXswapDeployer__factory(dxdao).deploy(
+  const dXswapDeployerArtifact = await deployer.loadArtifact('DXswapDeployer')
+  const dXswawDeployerArgs = contractConstructorArgs<DXswapDeployer__factory>(
     protocolFeeReceiver.address,
     dxdao.address,
     WETH.address,
     [token0.address, token1.address, token2.address, token0.address, token0.address, token2.address],
     [token1.address, WETH.address, token3.address, token3.address, WETH.address, token4.address],
-    [15, 15, 15, 15, 15, 15],
-    overrides
+    [15, 15, 15, 15, 15, 15]
   )
 
-  await dxdao.sendTransaction({ to: dxSwapDeployer.address, gasPrice: 20000000000, value: expandTo18Decimals(1) })
+  const dxSwapDeployer = (await deployer.deploy(dXswapDeployerArtifact, dXswawDeployerArgs)) as DXswapDeployer
+
+  const sendTx = await dxdao.sendTransaction({
+    to: dxSwapDeployer.address,
+    gasPrice: 20000000000,
+    value: expandTo18Decimals(1),
+  })
+  await sendTx.wait(1)
 
   const deployTx = await dxSwapDeployer.deploy()
   const deployTxReceipt = await provider.getTransactionReceipt(deployTx.hash)
-  const factoryAddress =
-    deployTxReceipt.logs !== undefined ? defaultAbiCoder.decode(['address'], deployTxReceipt.logs[0].data)[0] : null
+  const factoryDeployedLog = await dxSwapDeployer.queryFilter(dxSwapDeployer.filters.PairFactoryDeployed())
+  const factoryAddress = factoryDeployedLog[0].args.factory
 
   // deploy DXswapFactory
-  const dxswapFactory = (await new DXswapFactory__factory(dxdao).deploy(dxdao.address)).attach(factoryAddress)
+  const dxswapFactory = DXswapFactory__factory.connect(factoryAddress, dxdao)
 
   // deploy FeeSetter
   const feeSetterAddress = await dxswapFactory.feeToSetter()
-  const feeSetter = (await new DXswapFeeSetter__factory(dxdao).deploy(dxdao.address, dxswapFactory.address)).attach(
-    feeSetterAddress
-  )
+  const feeSetter = DXswapFeeSetter__factory.connect(feeSetterAddress, dxdao)
 
   // deploy FeeReceiver
   const feeReceiverAddress = await dxswapFactory.feeTo()
-  const feeReceiver = (
-    await new DXswapFeeReceiver__factory(dxdao).deploy(
-      dxdao.address,
-      dxswapFactory.address,
-      WETH.address,
-      protocolFeeReceiver.address,
-      fallbackReceiver.address
-    )
-  ).attach(feeReceiverAddress)
+
+  const feeReceiver = DXswapFeeReceiver__factory.connect(feeReceiverAddress, dxdao)
   // set receivers
-  feeReceiver.connect(dxdao).changeReceivers(protocolFeeReceiver.address, fallbackReceiver.address)
+  const changeReceiverTx = await feeReceiver
+    .connect(dxdao)
+    .changeReceivers(protocolFeeReceiver.address, fallbackReceiver.address)
+  await changeReceiverTx.wait(1)
 
   // initialize DXswapPair factory
-  const dxSwapPair_factory = await new DXswapPair__factory(dxdao).deploy()
+  const dXswapPairArtifact = await deployer.loadArtifact('DXswapPair')
+  const dxSwapPair_factory = await deployer.deploy(dXswapPairArtifact, [])
+
+  // const dxSwapPair_factory = await new DXswapPair__factory(dxdao).deploy()
 
   // create pairs
   const pairAddress1 = await dxswapFactory.getPair(token0.address, token1.address)
   const dxswapPair01 = dxSwapPair_factory.attach(pairAddress1)
 
+  console.log('pairAddress1', pairAddress1)
+  console.log('dxswapPair01', dxswapPair01.address)
+
   const pairAddress2 = await dxswapFactory.getPair(token2.address, token3.address)
   const dxswapPair23 = dxSwapPair_factory.attach(pairAddress2)
+  console.log('pairAddress2', pairAddress2)
+  console.log('dxswapPair23', dxswapPair23.address)
 
   const pairAddress3 = await dxswapFactory.getPair(token0.address, token3.address)
   const dxswapPair03 = dxSwapPair_factory.attach(pairAddress3)
+  console.log('pairAddress3', pairAddress3)
+  console.log('dxswapPair03', dxswapPair03.address)
 
   const pairAddress4 = await dxswapFactory.getPair(token2.address, token4.address)
   const dxswapPair24 = dxSwapPair_factory.attach(pairAddress4)
+  console.log('pairAddress4', pairAddress4)
+  console.log('dxswapPair24', dxswapPair24.address)
 
   // create weth/erc20 pair
   const WETHPairAddress = await dxswapFactory.getPair(token1.address, WETH.address)
   const wethToken1Pair = dxSwapPair_factory.attach(WETHPairAddress)
+  console.log('WETHPairAddress', WETHPairAddress)
+  console.log('wethToken1Pair', wethToken1Pair.address)
 
   // create weth/erc20 pair
   const WETH0PairAddress = await dxswapFactory.getPair(token0.address, WETH.address)
   const wethToken0Pair = dxSwapPair_factory.attach(WETH0PairAddress)
+  console.log('WETH0PairAddress', WETH0PairAddress)
+  console.log('wethToken0Pair', wethToken0Pair.address)
 
   return {
     dxswapFactory,
